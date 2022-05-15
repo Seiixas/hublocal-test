@@ -31,4 +31,10 @@ describe('Remove Place Use Case', () => {
 
     expect(places).toHaveLength(0);
   });
+
+  it('should not be able to remove a place that does not exists', () => {
+    expect(async () => {
+      await removePlaceUseCase.execute('fake-id');
+    }).rejects.toBeInstanceOf(Error);
+  });
 });

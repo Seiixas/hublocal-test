@@ -46,7 +46,7 @@ describe('Set Responsible Main Use Case', () => {
     expect(responsibles.is_main).toEqual(true);
   });
 
-  it('should not be able toe set a responsible as main that does not exists', () => {
+  it('should not be able to set a responsible as main that does not exists', () => {
     expect(async () => {
       const company = await companiesRepository.create({
         name: 'my-company',
@@ -58,10 +58,10 @@ describe('Set Responsible Main Use Case', () => {
         company_id: company.id,
         responsible_id: 'fake-responsible-id',
       });
-    });
+    }).rejects.toBeInstanceOf(Error);
   });
 
-  it('should not be able toe set a responsible as main to a company that does not exists', () => {
+  it('should not be able to set a responsible as main to a company that does not exists', () => {
     expect(async () => {
       const company = await companiesRepository.create({
         name: 'my-company',
@@ -86,6 +86,52 @@ describe('Set Responsible Main Use Case', () => {
         company_id: 'fake-company',
         responsible_id: responsible.id,
       });
-    });
+    }).rejects.toBeInstanceOf(Error);
+  });
+
+  it('should not be able to set a responsible as main if company already have one', () => {
+    expect(async () => {
+      const company = await companiesRepository.create({
+        name: 'my-company',
+        description: 'my-description',
+        CNPJ: 'my-CNPJ',
+      });
+
+      const responsible = await responsiblesRepository.create({
+        name: 'my-responsible-name',
+        phone_number: 'my-phone-number',
+        public_place: 'my-public-place',
+        complement: 'my-complement',
+        district: 'my-district',
+        city: 'my-city',
+        state: 'my-state',
+        cep: 'my-cep',
+        number: 'my-number',
+        company_id: company.id,
+      });
+
+      const secondResponsible = await responsiblesRepository.create({
+        name: 'my-responsible-name',
+        phone_number: 'my-phone-number',
+        public_place: 'my-public-place',
+        complement: 'my-complement',
+        district: 'my-district',
+        city: 'my-city',
+        state: 'my-state',
+        cep: 'my-cep',
+        number: 'my-number',
+        company_id: company.id,
+      });
+
+      await setResponsibleMainUseCase.execute({
+        responsible_id: secondResponsible.id,
+        company_id: company.id,
+      });
+
+      await setResponsibleMainUseCase.execute({
+        responsible_id: responsible.id,
+        company_id: company.id,
+      });
+    }).rejects.toBeInstanceOf(Error);
   });
 });

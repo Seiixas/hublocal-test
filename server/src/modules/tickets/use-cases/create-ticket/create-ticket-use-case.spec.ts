@@ -42,4 +42,16 @@ describe('Create Ticket Use Case', () => {
     expect(ticket).toHaveProperty('id');
     expect(ticket.status).toEqual('PENDENTE');
   });
+
+  it('should not be able to create a new ticket to a place that does not exists', () => {
+    expect(async () => {
+      await createTicketUseCase.execute({
+        title: 'ticket-title',
+        place_id: 'fake-place-id',
+        created_by: 'user-uuid',
+        updated_by: 'user-uuid',
+        data_updated: 'Place changed',
+      });
+    }).rejects.toBeInstanceOf(Error);
+  });
 });
