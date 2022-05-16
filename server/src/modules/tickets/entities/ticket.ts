@@ -22,8 +22,6 @@ class Ticket {
   constructor(id?: string) {
     this.id = id ?? uuidv4();
     this.title = this.id + this.title;
-    this.created_at = new Date();
-    this.updated_at = new Date();
     this.status = 'PENDENTE';
   }
 }
