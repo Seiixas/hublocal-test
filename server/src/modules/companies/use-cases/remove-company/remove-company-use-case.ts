@@ -1,7 +1,13 @@
+import { inject, injectable } from 'tsyringe';
+
 import { ICompaniesRepository } from '../../repositories/companies-repository';
 
+@injectable()
 class RemoveCompanyUseCase {
-  constructor(private companiesRepository: ICompaniesRepository) {}
+  constructor(
+    @inject('CompaniesRepository')
+    private companiesRepository: ICompaniesRepository
+  ) {}
 
   async execute(id: string): Promise<void> {
     const company = await this.companiesRepository.findById(id);

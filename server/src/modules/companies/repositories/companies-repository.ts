@@ -1,5 +1,5 @@
 import { ICreateCompany } from '../dtos/create-company';
-import { Company } from '../entities/company';
+import { Company } from '../infra/entities/company';
 
 interface ICompaniesRepository {
   listAll(): Promise<Company[]>;

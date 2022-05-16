@@ -1,4 +1,6 @@
-import { Company } from '../../entities/company';
+import { inject, injectable } from 'tsyringe';
+
+import { Company } from '../../infra/entities/company';
 import { ICompaniesRepository } from '../../repositories/companies-repository';
 
 interface IRequest {
@@ -7,8 +9,12 @@ interface IRequest {
   description: string;
 }
 
+@injectable()
 class CreateCompanyUseCase {
-  constructor(private readonly companiesRepository: ICompaniesRepository) {}
+  constructor(
+    @inject('CompaniesRepository')
+    private readonly companiesRepository: ICompaniesRepository
+  ) {}
 
   async execute({ CNPJ, name, description }: IRequest): Promise<Company> {
     const companyAlreadyExists = await this.companiesRepository.findByCNPJ(

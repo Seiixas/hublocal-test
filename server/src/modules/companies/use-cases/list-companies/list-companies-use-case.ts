@@ -1,8 +1,14 @@
-import { Company } from '../../entities/company';
+import { inject, injectable } from 'tsyringe';
+
+import { Company } from '../../infra/entities/company';
 import { ICompaniesRepository } from '../../repositories/companies-repository';
 
+@injectable()
 class ListCompaniesUseCase {
-  constructor(private readonly companiesRepository: ICompaniesRepository) {}
+  constructor(
+    @inject('CompaniesRepository')
+    private readonly companiesRepository: ICompaniesRepository
+  ) {}
 
   async execute(): Promise<Company[]> {
     const companies = await this.companiesRepository.listAll();

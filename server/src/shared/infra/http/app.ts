@@ -1,10 +1,13 @@
+import 'reflect-metadata';
+import '../../container';
+
 import express from 'express';
 
-const app = express();
-app.use(express.json());
+import { routes } from './routes';
 
-app.get('/', (request, response) => {
-  return response.json({ message: 'Hello' });
-});
+const app = express();
+
+app.use(express.json());
+app.use('/api/v1', routes);
 
 export { app };

@@ -1,5 +1,7 @@
 import { DataSource } from 'typeorm';
 
+import { Company } from '../../../modules/companies/infra/entities/company';
+
 export const dataSource = new DataSource({
   type: 'postgres',
   port: 5432,
@@ -8,8 +10,7 @@ export const dataSource = new DataSource({
   password: 'docker',
   database: 'hublocal',
   synchronize: true,
-  logging: true,
-  entities: [],
+  entities: [Company],
   subscribers: [],
   migrations: ['src/shared/infra/typeorm/migrations/*.ts'],
 });

@@ -1,4 +1,6 @@
-import { Company } from '../../entities/company';
+import { inject, injectable } from 'tsyringe';
+
+import { Company } from '../../infra/entities/company';
 import { ICompaniesRepository } from '../../repositories/companies-repository';
 
 interface IRequest {
@@ -8,8 +10,12 @@ interface IRequest {
   name?: string;
 }
 
+@injectable()
 class UpdateCompanyUseCase {
-  constructor(private readonly companiesRepository: ICompaniesRepository) {}
+  constructor(
+    @inject('CompaniesRepository')
+    private readonly companiesRepository: ICompaniesRepository
+  ) {}
 
   async execute({ id, CNPJ, description, name }: IRequest): Promise<Company> {
     const company = await this.companiesRepository.findById(id);
@@ -18,11 +24,13 @@ class UpdateCompanyUseCase {
       throw new Error('This company does not exists');
     }
 
-    const companyWithCNPJAlreadyExists =
-      await this.companiesRepository.findByCNPJ(CNPJ);
+    if (CNPJ) {
+      const companyWithCNPJAlreadyExists =
+        await this.companiesRepository.findByCNPJ(CNPJ);
 
-    if (companyWithCNPJAlreadyExists) {
-      throw new Error('This CNPJ is already in use');
+      if (companyWithCNPJAlreadyExists) {
+        throw new Error('This CNPJ is already in use');
+      }
     }
 
     company.CNPJ = CNPJ ?? company.CNPJ;
