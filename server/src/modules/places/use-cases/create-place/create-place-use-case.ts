@@ -1,5 +1,7 @@
+import { inject, injectable } from 'tsyringe';
+
 import { ICompaniesRepository } from '../../../companies/repositories/companies-repository';
-import { Place } from '../../entities/place';
+import { Place } from '../../infra/entities/place';
 import { IPlacesRepository } from '../../repositories/places-repository';
 
 interface IRequest {
@@ -14,9 +16,12 @@ interface IRequest {
   company_id: string;
 }
 
+@injectable()
 class CreatePlaceUseCase {
   constructor(
+    @inject('PlacesRepository')
     private readonly placesRepository: IPlacesRepository,
+    @inject('CompaniesRepository')
     private readonly companiesRepository: ICompaniesRepository
   ) {}
 
@@ -33,9 +38,9 @@ class CreatePlaceUseCase {
       company_id,
     } = data;
 
-    const companyExists = await this.companiesRepository.findById(company_id);
+    const company = await this.companiesRepository.findById(company_id);
 
-    if (!companyExists) {
+    if (!company) {
       throw new Error('This company does not exists');
     }
 
@@ -48,7 +53,7 @@ class CreatePlaceUseCase {
       state,
       cep,
       number,
-      company_id,
+      company,
     });
 
     return place;

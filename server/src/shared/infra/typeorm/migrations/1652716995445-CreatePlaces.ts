@@ -48,11 +48,6 @@ export class CreatePlaces1652716995445 implements MigrationInterface {
             name: 'number',
             type: 'varchar',
           },
-          {
-            name: 'company_id',
-            type: 'uuid',
-            isNullable: true,
-          },
         ],
       })
     );

@@ -1,5 +1,5 @@
 import { ICreatePlace } from '../../dtos/create-place';
-import { Place } from '../../entities/place';
+import { Place } from '../../infra/entities/place';
 import { IPlacesRepository } from '../places-repository';
 
 class PlacesRepositoryInMemory implements IPlacesRepository {
@@ -13,6 +13,10 @@ class PlacesRepositoryInMemory implements IPlacesRepository {
     this.places.push(place);
 
     return place;
+  }
+
+  async findByIds(ids: string[]): Promise<Place[]> {
+    throw new Error('Not implemented');
   }
 
   async listAll(): Promise<Place[]> {

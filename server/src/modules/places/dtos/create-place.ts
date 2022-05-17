@@ -1,3 +1,5 @@
+import { Company } from '../../companies/infra/entities/company';
+
 interface ICreatePlace {
   id?: string;
   name: string;
@@ -8,7 +10,7 @@ interface ICreatePlace {
   state: string;
   cep: string;
   number: string;
-  company_id: string;
+  company: Company;
 }
 
 export { ICreatePlace };

@@ -1,5 +1,7 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
+
+import { Place } from '../../../places/infra/entities/place';
 
 @Entity('companies')
 class Company {
@@ -14,6 +16,9 @@ class Company {
 
   @Column()
   CNPJ: string;
+
+  @OneToMany(() => Place, (place) => place.company)
+  places: Place[];
 
   constructor() {
     if (!this.id) {

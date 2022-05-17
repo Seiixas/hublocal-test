@@ -1,7 +1,13 @@
+import { inject, injectable } from 'tsyringe';
+
 import { IPlacesRepository } from '../../repositories/places-repository';
 
+@injectable()
 class RemovePlaceUseCase {
-  constructor(private placesRepository: IPlacesRepository) {}
+  constructor(
+    @inject('PlacesRepository')
+    private placesRepository: IPlacesRepository
+  ) {}
 
   async execute(id: string): Promise<void> {
     const place = await this.placesRepository.findById(id);

@@ -1,8 +1,10 @@
 import { ICreatePlace } from '../dtos/create-place';
-import { Place } from '../entities/place';
+import { Place } from '../infra/entities/place';
 
 interface IPlacesRepository {
   listAll(): Promise<Place[]>;
+
+  findByIds(ids: string[]): Promise<Place[]>;
 
   create(data: ICreatePlace): Promise<Place>;
 

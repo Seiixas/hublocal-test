@@ -1,3 +1,5 @@
+import { inject, injectable } from 'tsyringe';
+
 import { IPlacesRepository } from '../../repositories/places-repository';
 
 interface IRequest {
@@ -12,8 +14,12 @@ interface IRequest {
   number?: string;
 }
 
+@injectable()
 class UpdatePlaceUseCase {
-  constructor(private readonly placesRepository: IPlacesRepository) {}
+  constructor(
+    @inject('PlacesRepository')
+    private readonly placesRepository: IPlacesRepository
+  ) {}
 
   async execute(data: IRequest) {
     const {
