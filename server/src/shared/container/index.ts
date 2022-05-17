@@ -1,5 +1,7 @@
 import { container } from 'tsyringe';
 
+import { UsersRepository } from '../../modules/accounts/infra/repositories/users-repository';
+import { IUsersRepository } from '../../modules/accounts/repositories/users-repository';
 import { CompaniesRepository } from '../../modules/companies/infra/repositories/companies-repository';
 import { ICompaniesRepository } from '../../modules/companies/repositories/companies-repository';
 import { PlacesRepository } from '../../modules/places/infra/repositories/places-repository';
@@ -27,4 +29,9 @@ container.registerSingleton<IResponsiblesRepository>(
 container.registerSingleton<ITicketsRepository>(
   'TicketsRepository',
   TicketsRepository
+);
+
+container.registerSingleton<IUsersRepository>(
+  'UsersRepository',
+  UsersRepository
 );

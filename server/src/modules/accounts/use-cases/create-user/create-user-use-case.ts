@@ -1,4 +1,5 @@
 import { hash } from 'bcrypt';
+import { inject, injectable } from 'tsyringe';
 
 import { IUsersRepository } from '../../repositories/users-repository';
 
@@ -13,8 +14,12 @@ interface IResponse {
   email: string;
 }
 
+@injectable()
 class CreateUserUseCase {
-  constructor(private readonly usersRepository: IUsersRepository) {}
+  constructor(
+    @inject('UsersRepository')
+    private readonly usersRepository: IUsersRepository
+  ) {}
 
   async execute({ name, email, password }: IRequest): Promise<IResponse> {
     const userAlreadyExists = await this.usersRepository.findByEmail(email);

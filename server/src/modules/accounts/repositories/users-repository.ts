@@ -1,5 +1,5 @@
 import { ICreateUser } from '../dtos/create-user';
-import { User } from '../entities/user';
+import { User } from '../infra/entities/user';
 
 interface IUsersRepository {
   create(data: ICreateUser): Promise<User>;
