@@ -30,7 +30,7 @@ describe('Show Responsible Use Case', () => {
       state: 'my-state',
       cep: 'my-cep',
       number: 'my-number',
-      company_id: company.id,
+      company,
     });
 
     const responsibles = await showResponsibleUseCase.execute(responsible.id);

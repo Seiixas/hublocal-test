@@ -37,7 +37,7 @@ describe('Create Responsible Use Case', () => {
     });
 
     expect(responsible).toHaveProperty('id');
-    expect(responsible.company_id).toEqual(company.id);
+    expect(responsible.company).toEqual(company);
   });
 
   it('should not be able to create a responsible for a company that does not exists', () => {

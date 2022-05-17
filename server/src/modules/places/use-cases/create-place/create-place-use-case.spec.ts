@@ -41,7 +41,7 @@ describe('Create Place Use Case', () => {
     const placeCreated = await createPlaceUseCase.execute(place);
 
     expect(placeCreated).toHaveProperty('id');
-    expect(placeCreated.company_id).toEqual(companyCreated.id);
+    expect(placeCreated.company).toEqual(companyCreated);
   });
 
   it('should not be able to create a place to a company that does not exists', () => {

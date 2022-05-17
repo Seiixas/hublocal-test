@@ -1,16 +1,25 @@
+import { CompaniesRepositoryInMemory } from '../../../companies/repositories/implementations/companies-repository-in-memory';
 import { PlacesRepositoryInMemory } from '../../repositories/implementations/places-repository-in-memory';
 import { ShowPlaceUseCase } from './show-place-use-case';
 
 let placesRepository: PlacesRepositoryInMemory;
+let companiesRepository: CompaniesRepositoryInMemory;
 let showPlaceUseCase: ShowPlaceUseCase;
 
 describe('Show Place Use Case', () => {
   beforeEach(() => {
     placesRepository = new PlacesRepositoryInMemory();
+    companiesRepository = new CompaniesRepositoryInMemory();
     showPlaceUseCase = new ShowPlaceUseCase(placesRepository);
   });
 
   it('should be able to show a place', async () => {
+    const company = await companiesRepository.create({
+      name: 'my-company',
+      CNPJ: 'my-cnpj',
+      description: 'my-description',
+    });
+
     const newPlace = await placesRepository.create({
       name: 'my-place',
       public_place: 'my-public-place',
@@ -20,7 +29,7 @@ describe('Show Place Use Case', () => {
       state: 'my-state',
       cep: 'my-cep',
       number: 'my-number',
-      company_id: 'company-id',
+      company,
     });
 
     const place = await showPlaceUseCase.execute(newPlace.id);

@@ -19,7 +19,10 @@ describe('Show Responsible Use Case', () => {
 
     const user = await showUserUseCase.execute(userCreated.id);
 
-    expect(user).toEqual([userCreated]);
+    expect(user).toEqual({
+      email: userCreated.email,
+      name: userCreated.name,
+    });
   });
 
   it('should not be able to show a responsible that does not exists', () => {

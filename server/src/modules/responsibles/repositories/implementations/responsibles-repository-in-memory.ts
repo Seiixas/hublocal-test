@@ -16,7 +16,7 @@ class ResponsiblesRepositoryInMemory implements IResponsiblesRepository {
       state,
       cep,
       number,
-      company_id,
+      company,
     } = data;
 
     const responsible = new Responsible();
@@ -31,7 +31,7 @@ class ResponsiblesRepositoryInMemory implements IResponsiblesRepository {
       state,
       cep,
       number,
-      company_id,
+      company,
     });
 
     this.responsibles.push(responsible);
@@ -61,7 +61,7 @@ class ResponsiblesRepositoryInMemory implements IResponsiblesRepository {
 
   async findByCompanyId(company_id: string): Promise<Responsible[]> {
     const responsibles = this.responsibles.filter(
-      (responsible) => responsible.company_id === company_id
+      (responsible) => responsible.company.id === company_id
     );
 
     return responsibles;

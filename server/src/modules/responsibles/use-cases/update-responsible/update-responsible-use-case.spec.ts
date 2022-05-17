@@ -33,7 +33,7 @@ describe('Update Responsible Use Case', () => {
       state: 'my-state',
       cep: 'my-cep',
       number: 'my-number',
-      company_id: company.id,
+      company,
     });
 
     const responsibleUpdated = await updateResponsibleUseCase.execute({
@@ -71,7 +71,7 @@ describe('Update Responsible Use Case', () => {
         state: 'my-state',
         cep: 'my-cep',
         number: 'my-number',
-        company_id: company.id,
+        company,
       });
 
       await updateResponsibleUseCase.execute({

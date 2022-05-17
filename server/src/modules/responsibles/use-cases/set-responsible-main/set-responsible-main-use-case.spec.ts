@@ -33,7 +33,7 @@ describe('Set Responsible Main Use Case', () => {
       state: 'my-state',
       cep: 'my-cep',
       number: 'my-number',
-      company_id: company.id,
+      company,
     });
 
     await setResponsibleMainUseCase.execute({
@@ -79,7 +79,7 @@ describe('Set Responsible Main Use Case', () => {
         state: 'my-state',
         cep: 'my-cep',
         number: 'my-number',
-        company_id: company.id,
+        company,
       });
 
       await setResponsibleMainUseCase.execute({
@@ -107,7 +107,7 @@ describe('Set Responsible Main Use Case', () => {
         state: 'my-state',
         cep: 'my-cep',
         number: 'my-number',
-        company_id: company.id,
+        company,
       });
 
       const secondResponsible = await responsiblesRepository.create({
@@ -120,7 +120,7 @@ describe('Set Responsible Main Use Case', () => {
         state: 'my-state',
         cep: 'my-cep',
         number: 'my-number',
-        company_id: company.id,
+        company,
       });
 
       await setResponsibleMainUseCase.execute({
