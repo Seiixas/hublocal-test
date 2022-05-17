@@ -2,6 +2,7 @@ import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 
 import { Place } from '../../../places/infra/entities/place';
+import { Responsible } from '../../../responsibles/infra/entities/responsible';
 
 @Entity('companies')
 class Company {
@@ -19,6 +20,9 @@ class Company {
 
   @OneToMany(() => Place, (place) => place.company)
   places: Place[];
+
+  @OneToMany(() => Responsible, (responsible) => responsible.company)
+  responsibles: Responsible[];
 
   constructor() {
     if (!this.id) {

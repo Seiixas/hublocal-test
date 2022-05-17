@@ -1,5 +1,5 @@
 import { ICreateResponsible } from '../dtos/create-responsible';
-import { Responsible } from '../entities/responsible';
+import { Responsible } from '../infra/entities/responsible';
 
 interface IResponsiblesRepository {
   create(data: ICreateResponsible): Promise<Responsible>;

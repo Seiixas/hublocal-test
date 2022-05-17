@@ -2,6 +2,7 @@ import { DataSource } from 'typeorm';
 
 import { Company } from '../../../modules/companies/infra/entities/company';
 import { Place } from '../../../modules/places/infra/entities/place';
+import { Responsible } from '../../../modules/responsibles/infra/entities/responsible';
 
 export const dataSource = new DataSource({
   type: 'postgres',
@@ -11,7 +12,7 @@ export const dataSource = new DataSource({
   password: 'docker',
   database: 'hublocal',
   synchronize: true,
-  entities: [Company, Place],
+  entities: [Company, Place, Responsible],
   subscribers: [],
   migrations: ['src/shared/infra/typeorm/migrations/*.ts'],
 });

@@ -1,7 +1,11 @@
+import { inject, injectable } from 'tsyringe';
+
 import { IResponsiblesRepository } from '../../repositories/reponsibles-repository';
 
+@injectable()
 class RemoveResponsibleUseCase {
   constructor(
+    @inject('ResponsiblesRepository')
     private readonly responsiblesRepository: IResponsiblesRepository
   ) {}
 

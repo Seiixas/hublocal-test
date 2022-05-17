@@ -1,5 +1,7 @@
+import { inject, injectable } from 'tsyringe';
+
 import { ICompaniesRepository } from '../../../companies/repositories/companies-repository';
-import { Responsible } from '../../entities/responsible';
+import { Responsible } from '../../infra/entities/responsible';
 import { IResponsiblesRepository } from '../../repositories/reponsibles-repository';
 
 interface IRequest {
@@ -16,9 +18,12 @@ interface IRequest {
   company_id?: string;
 }
 
+@injectable()
 class UpdateResponsibleUseCase {
   constructor(
+    @inject('ResponsiblesRepository')
     private readonly responsiblesRepository: IResponsiblesRepository,
+    @inject('CompaniesRepository')
     private readonly companiesRepository: ICompaniesRepository
   ) {}
 
@@ -49,6 +54,8 @@ class UpdateResponsibleUseCase {
       if (!company) {
         throw new Error('This company does not exists');
       }
+
+      responsible.company = company;
     }
 
     responsible.name = name ?? responsible.name;
@@ -60,7 +67,6 @@ class UpdateResponsibleUseCase {
     responsible.state = state ?? responsible.state;
     responsible.cep = cep ?? responsible.cep;
     responsible.number = number ?? responsible.number;
-    responsible.company_id = company_id ?? responsible.company_id;
 
     await this.responsiblesRepository.create(responsible);
 

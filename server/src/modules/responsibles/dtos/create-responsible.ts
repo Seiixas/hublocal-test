@@ -1,3 +1,5 @@
+import { Company } from '../../companies/infra/entities/company';
+
 interface ICreateResponsible {
   id?: string;
   name: string;
@@ -9,7 +11,7 @@ interface ICreateResponsible {
   state: string;
   cep: string;
   number: string;
-  company_id: string;
+  company: Company;
   is_main?: boolean;
 }
 

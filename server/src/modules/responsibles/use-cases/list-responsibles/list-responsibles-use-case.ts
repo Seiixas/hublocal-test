@@ -1,8 +1,12 @@
-import { Responsible } from '../../entities/responsible';
+import { inject, injectable } from 'tsyringe';
+
+import { Responsible } from '../../infra/entities/responsible';
 import { IResponsiblesRepository } from '../../repositories/reponsibles-repository';
 
+@injectable()
 class ListResponsiblesUseCase {
   constructor(
+    @inject('ResponsiblesRepository')
     private readonly responsiblesRepository: IResponsiblesRepository
   ) {}
 

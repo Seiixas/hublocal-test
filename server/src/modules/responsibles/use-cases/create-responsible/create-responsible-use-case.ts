@@ -1,5 +1,7 @@
+import { inject, injectable } from 'tsyringe';
+
 import { ICompaniesRepository } from '../../../companies/repositories/companies-repository';
-import { Responsible } from '../../entities/responsible';
+import { Responsible } from '../../infra/entities/responsible';
 import { IResponsiblesRepository } from '../../repositories/reponsibles-repository';
 
 interface IRequest {
@@ -16,9 +18,12 @@ interface IRequest {
   is_main?: boolean;
 }
 
+@injectable()
 class CreateResponsibleUseCase {
   constructor(
+    @inject('ResponsiblesRepository')
     private readonly responsiblesRepository: IResponsiblesRepository,
+    @inject('CompaniesRepository')
     private readonly companiesRepository: ICompaniesRepository
   ) {}
 
@@ -54,7 +59,7 @@ class CreateResponsibleUseCase {
       cep,
       number,
       is_main,
-      company_id,
+      company: companyExists,
     });
 
     return responsible;

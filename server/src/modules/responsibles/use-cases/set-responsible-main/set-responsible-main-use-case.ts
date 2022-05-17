@@ -1,3 +1,5 @@
+import { inject, injectable } from 'tsyringe';
+
 import { ICompaniesRepository } from '../../../companies/repositories/companies-repository';
 import { IResponsiblesRepository } from '../../repositories/reponsibles-repository';
 
@@ -6,9 +8,12 @@ interface IRequest {
   responsible_id: string;
 }
 
+@injectable()
 class SetResponsibleMainUseCase {
   constructor(
+    @inject('ResponsiblesRepository')
     private readonly responsiblesRepository: IResponsiblesRepository,
+    @inject('CompaniesRepository')
     private readonly companiesRepository: ICompaniesRepository
   ) {}
 
