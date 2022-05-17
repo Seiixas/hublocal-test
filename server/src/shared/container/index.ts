@@ -6,6 +6,8 @@ import { PlacesRepository } from '../../modules/places/infra/repositories/places
 import { IPlacesRepository } from '../../modules/places/repositories/places-repository';
 import { ResponsiblesRepository } from '../../modules/responsibles/infra/repositories/responsibles-repository';
 import { IResponsiblesRepository } from '../../modules/responsibles/repositories/reponsibles-repository';
+import { TicketsRepository } from '../../modules/tickets/infra/repositories/tickets-repository';
+import { ITicketsRepository } from '../../modules/tickets/repositories/tickets-repository';
 
 container.registerSingleton<ICompaniesRepository>(
   'CompaniesRepository',
@@ -20,4 +22,9 @@ container.registerSingleton<IPlacesRepository>(
 container.registerSingleton<IResponsiblesRepository>(
   'ResponsiblesRepository',
   ResponsiblesRepository
+);
+
+container.registerSingleton<ITicketsRepository>(
+  'TicketsRepository',
+  TicketsRepository
 );

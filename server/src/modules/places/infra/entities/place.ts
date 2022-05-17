@@ -1,14 +1,8 @@
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToMany,
-  PrimaryColumn,
-} from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany, PrimaryColumn } from 'typeorm';
 import { v4 as uuidV4 } from 'uuid';
 
 import { Company } from '../../../companies/infra/entities/company';
+import { Ticket } from '../../../tickets/infra/entities/ticket';
 
 @Entity('places')
 class Place {
@@ -41,6 +35,9 @@ class Place {
 
   @ManyToOne(() => Company, (company) => company.places)
   company: Company;
+
+  @OneToMany(() => Ticket, (ticket) => ticket.place)
+  tickets: Ticket[];
 
   constructor(id?: string) {
     this.id = id ?? uuidV4();

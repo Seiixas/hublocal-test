@@ -1,5 +1,5 @@
 import { ICreateTicket } from '../dtos/create-ticket';
-import { Ticket } from '../entities/ticket';
+import { Ticket } from '../infra/entities/ticket';
 
 interface ITicketsRepository {
   create(data: ICreateTicket): Promise<Ticket>;

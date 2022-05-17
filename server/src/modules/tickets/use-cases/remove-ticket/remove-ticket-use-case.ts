@@ -1,7 +1,13 @@
+import { inject, injectable } from 'tsyringe';
+
 import { ITicketsRepository } from '../../repositories/tickets-repository';
 
+@injectable()
 class RemoveTicketUseCase {
-  constructor(private readonly ticketsRepository: ITicketsRepository) {}
+  constructor(
+    @inject('TicketsRepository')
+    private readonly ticketsRepository: ITicketsRepository
+  ) {}
 
   async execute(id: string): Promise<void> {
     const ticket = await this.ticketsRepository.findById(id);

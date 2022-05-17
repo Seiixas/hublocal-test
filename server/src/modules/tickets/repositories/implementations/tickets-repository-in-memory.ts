@@ -1,5 +1,5 @@
 import { ICreateTicket } from '../../dtos/create-ticket';
-import { Ticket } from '../../entities/ticket';
+import { Ticket } from '../../infra/entities/ticket';
 import { ITicketsRepository } from '../tickets-repository';
 
 class TicketsRepositoryInMemory implements ITicketsRepository {
