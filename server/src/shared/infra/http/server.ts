@@ -1,3 +1,5 @@
+import 'express-async-errors';
+
 import { dataSource } from '../typeorm/datasource';
 import { app } from './app';
 
@@ -11,5 +13,5 @@ dataSource
     });
   })
   .catch((err: any) => {
-    console.log(err);
+    console.log(err.message);
   });

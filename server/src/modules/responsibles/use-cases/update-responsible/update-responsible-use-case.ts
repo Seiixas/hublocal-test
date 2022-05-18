@@ -1,5 +1,6 @@
 import { inject, injectable } from 'tsyringe';
 
+import { NotFoundException } from '../../../../shared/errors/NotFoundException';
 import { ICompaniesRepository } from '../../../companies/repositories/companies-repository';
 import { Responsible } from '../../infra/entities/responsible';
 import { IResponsiblesRepository } from '../../repositories/reponsibles-repository';
@@ -45,14 +46,14 @@ class UpdateResponsibleUseCase {
     const responsible = await this.responsiblesRepository.findById(id);
 
     if (!responsible) {
-      throw new Error('This responsible does not exists');
+      throw new NotFoundException('This responsible does not exists');
     }
 
     if (company_id) {
       const company = await this.companiesRepository.findById(company_id);
 
       if (!company) {
-        throw new Error('This company does not exists');
+        throw new NotFoundException('This company does not exists');
       }
 
       responsible.company = company;

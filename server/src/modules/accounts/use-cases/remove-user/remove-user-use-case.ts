@@ -1,5 +1,6 @@
 import { inject, injectable } from 'tsyringe';
 
+import { NotFoundException } from '../../../../shared/errors/NotFoundException';
 import { IUsersRepository } from '../../repositories/users-repository';
 
 @injectable()
@@ -13,7 +14,7 @@ class RemoveUserUseCase {
     const user = await this.usersRepository.findById(id);
 
     if (!user) {
-      throw new Error('This user does not exists');
+      throw new NotFoundException('This user does not exists');
     }
 
     await this.usersRepository.remove(user);

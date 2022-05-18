@@ -1,5 +1,6 @@
 import { inject, injectable } from 'tsyringe';
 
+import { NotFoundException } from '../../../../shared/errors/NotFoundException';
 import { Ticket } from '../../infra/entities/ticket';
 import { ITicketsRepository } from '../../repositories/tickets-repository';
 
@@ -19,7 +20,7 @@ class UpdateTicketUseCase {
     const ticket = await this.ticketsRepository.findById(id);
 
     if (!ticket) {
-      throw new Error('This ticket does not exists');
+      throw new NotFoundException('This ticket does not exists');
     }
 
     ticket.status = status ?? ticket.status;

@@ -1,5 +1,7 @@
 import { inject, injectable } from 'tsyringe';
 
+import { ConflictException } from '../../../../shared/errors/ConflictException';
+import { NotFoundException } from '../../../../shared/errors/NotFoundException';
 import { ICompaniesRepository } from '../../../companies/repositories/companies-repository';
 import { IResponsiblesRepository } from '../../repositories/reponsibles-repository';
 
@@ -23,13 +25,13 @@ class SetResponsibleMainUseCase {
     );
 
     if (!responsible) {
-      throw new Error('This responsible does not exists');
+      throw new NotFoundException('This responsible does not exists');
     }
 
     const company = await this.companiesRepository.findById(company_id);
 
     if (!company) {
-      throw new Error('This company does not exists');
+      throw new NotFoundException('This company does not exists');
     }
 
     const responsiblesFromCompany =
@@ -40,7 +42,9 @@ class SetResponsibleMainUseCase {
     );
 
     if (companyAlreadyHaveMainResponsible) {
-      throw new Error('This company already have a main responsible');
+      throw new ConflictException(
+        'This company already have a main responsible'
+      );
     }
 
     responsible.is_main = true;

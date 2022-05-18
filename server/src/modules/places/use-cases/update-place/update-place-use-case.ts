@@ -1,5 +1,6 @@
 import { inject, injectable } from 'tsyringe';
 
+import { NotFoundException } from '../../../../shared/errors/NotFoundException';
 import { IPlacesRepository } from '../../repositories/places-repository';
 
 interface IRequest {
@@ -37,7 +38,7 @@ class UpdatePlaceUseCase {
     const place = await this.placesRepository.findById(id);
 
     if (!place) {
-      throw new Error('This place does not exists');
+      throw new NotFoundException('This place does not exists');
     }
 
     place.name = name ?? place.name;

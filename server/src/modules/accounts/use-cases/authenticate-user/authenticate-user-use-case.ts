@@ -3,6 +3,7 @@ import { sign } from 'jsonwebtoken';
 import { inject, injectable } from 'tsyringe';
 
 import { expiresIn, secret } from '../../../../config/auth';
+import { UnauthorizedException } from '../../../../shared/errors/UnauthorizedException';
 import { IUsersRepository } from '../../repositories/users-repository';
 
 interface IRequest {
@@ -29,7 +30,7 @@ class AuthenticateUserUseCase {
     const emailMatches = await this.usersRepository.findByEmail(email);
 
     if (!emailMatches) {
-      throw new Error('Email or password incorrect');
+      throw new UnauthorizedException('Email or password incorrect');
     }
 
     const user = emailMatches;
@@ -37,7 +38,7 @@ class AuthenticateUserUseCase {
     const passwordMatches = await compare(password, user.password);
 
     if (!passwordMatches) {
-      throw new Error('Email or password incorrect');
+      throw new UnauthorizedException('Email or password incorrect');
     }
 
     const auth = sign({}, secret, {

@@ -1,5 +1,6 @@
 import { inject, injectable } from 'tsyringe';
 
+import { NotFoundException } from '../../../../shared/errors/NotFoundException';
 import { ICompaniesRepository } from '../../../companies/repositories/companies-repository';
 import { Responsible } from '../../infra/entities/responsible';
 import { IResponsiblesRepository } from '../../repositories/reponsibles-repository';
@@ -45,7 +46,7 @@ class CreateResponsibleUseCase {
     const companyExists = await this.companiesRepository.findById(company_id);
 
     if (!companyExists) {
-      throw new Error('This company does not exists');
+      throw new NotFoundException('This company does not exists');
     }
 
     const responsible = await this.responsiblesRepository.create({

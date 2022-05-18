@@ -1,5 +1,6 @@
 import { inject, injectable } from 'tsyringe';
 
+import { NotFoundException } from '../../../../shared/errors/NotFoundException';
 import { IResponsiblesRepository } from '../../repositories/reponsibles-repository';
 
 @injectable()
@@ -13,7 +14,7 @@ class RemoveResponsibleUseCase {
     const responsible = await this.responsiblesRepository.findById(id);
 
     if (!responsible) {
-      throw new Error('This responsible does not exists');
+      throw new NotFoundException('This responsible does not exists');
     }
 
     await this.responsiblesRepository.remove(responsible);

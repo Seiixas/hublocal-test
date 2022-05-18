@@ -1,6 +1,7 @@
 import { hash } from 'bcrypt';
 import { inject, injectable } from 'tsyringe';
 
+import { ConflictException } from '../../../../shared/errors/ConflictException';
 import { IUsersRepository } from '../../repositories/users-repository';
 
 interface IRequest {
@@ -25,7 +26,7 @@ class CreateUserUseCase {
     const userAlreadyExists = await this.usersRepository.findByEmail(email);
 
     if (userAlreadyExists) {
-      throw new Error('This user already exists');
+      throw new ConflictException('This user already exists');
     }
 
     const hashedPassword = await hash(password, 10);

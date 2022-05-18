@@ -1,5 +1,6 @@
 import { inject, injectable } from 'tsyringe';
 
+import { NotFoundException } from '../../../../shared/errors/NotFoundException';
 import { IPlacesRepository } from '../../../places/repositories/places-repository';
 import { Ticket } from '../../infra/entities/ticket';
 import { ITicketsRepository } from '../../repositories/tickets-repository';
@@ -29,7 +30,7 @@ class CreateTicketUseCase {
     const place = await this.placesRepository.findById(place_id);
 
     if (!place) {
-      throw new Error('This place does not exists');
+      throw new NotFoundException('This place does not exists');
     }
 
     const ticket = await this.ticketsRepository.create({

@@ -1,5 +1,6 @@
 import { inject, injectable } from 'tsyringe';
 
+import { NotFoundException } from '../../../../shared/errors/NotFoundException';
 import { ITicketsRepository } from '../../repositories/tickets-repository';
 
 @injectable()
@@ -13,7 +14,7 @@ class RemoveTicketUseCase {
     const ticket = await this.ticketsRepository.findById(id);
 
     if (!ticket) {
-      throw new Error('This ticket does not exists');
+      throw new NotFoundException('This ticket does not exists');
     }
 
     await this.ticketsRepository.remove(ticket);

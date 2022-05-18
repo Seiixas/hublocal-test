@@ -1,5 +1,6 @@
 import { inject, injectable } from 'tsyringe';
 
+import { NotFoundException } from '../../../../shared/errors/NotFoundException';
 import { ICompaniesRepository } from '../../repositories/companies-repository';
 
 @injectable()
@@ -13,7 +14,7 @@ class RemoveCompanyUseCase {
     const company = await this.companiesRepository.findById(id);
 
     if (!company) {
-      throw new Error('This company does not exists');
+      throw new NotFoundException('This company does not exists');
     }
 
     await this.companiesRepository.remove(company);

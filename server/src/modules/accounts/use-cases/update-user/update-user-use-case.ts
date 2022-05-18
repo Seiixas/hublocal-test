@@ -1,6 +1,8 @@
 import { hash } from 'bcrypt';
 import { inject, injectable } from 'tsyringe';
 
+import { ConflictException } from '../../../../shared/errors/ConflictException';
+import { NotFoundException } from '../../../../shared/errors/NotFoundException';
 import { IUsersRepository } from '../../repositories/users-repository';
 
 interface IRequest {
@@ -27,13 +29,13 @@ class UpdateUserUseCase {
     const user = await this.usersRepository.findById(id);
 
     if (!user) {
-      throw new Error('This user does not exists');
+      throw new NotFoundException('This user does not exists');
     }
 
     const emailAlreadyInUse = await this.usersRepository.findByEmail(email);
 
     if (emailAlreadyInUse) {
-      throw new Error('This email is already in use');
+      throw new ConflictException('This email is already in use');
     }
 
     user.name = name ?? user.name;

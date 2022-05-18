@@ -1,5 +1,6 @@
 import { inject, injectable } from 'tsyringe';
 
+import { NotFoundException } from '../../../../shared/errors/NotFoundException';
 import { ICompaniesRepository } from '../../../companies/repositories/companies-repository';
 import { Place } from '../../infra/entities/place';
 import { IPlacesRepository } from '../../repositories/places-repository';
@@ -41,7 +42,7 @@ class CreatePlaceUseCase {
     const company = await this.companiesRepository.findById(company_id);
 
     if (!company) {
-      throw new Error('This company does not exists');
+      throw new NotFoundException('This company does not exists');
     }
 
     const place = await this.placesRepository.create({
