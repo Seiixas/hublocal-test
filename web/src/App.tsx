@@ -1,8 +1,8 @@
+import Button from '@mui/material/Button';
+import { Singin } from './components/Signin';
 
 function App() {
-  return (
-    <h1>Olá mundo</h1>
-  )
+  return <Singin />
 }
 
-export default App
+export { App }
