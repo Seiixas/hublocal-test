@@ -1,9 +1,7 @@
-import Button from '@mui/material/Button';
-import { Singin } from './components/Signin';
-import { Signup } from './components/Signup';
+import { Paths } from './routes';
 
 function App() {
-  return <Signup />
+  return <Paths />
 }
 
 export { App }

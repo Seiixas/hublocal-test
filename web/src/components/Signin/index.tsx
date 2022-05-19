@@ -3,6 +3,7 @@ import { Container } from "./style";
 import hublocalGif from '../../assets/signin/hublocal-logo-animated.gif';
 import { Button, TextField } from "@mui/material";
 import { FormEvent, useState } from "react";
+import { Link } from "react-router-dom";
 
 export function Singin() {
   const [emailAuthentication, setEmailAuthentication] = useState<string | null>(null);
@@ -31,7 +32,7 @@ export function Singin() {
           type="password"
           onChange={(event) => setPasswordAuthentication(event.target.value)} />
         <Button type="submit">Entrar</Button>
-        <span>Não é cadastrado? Crie sua conta <a href="#">aqui</a>.</span>
+        <span>Não é cadastrado? Crie sua conta <Link to='/signup'>aqui</Link>.</span>
       </form>
     </Container>
   )
