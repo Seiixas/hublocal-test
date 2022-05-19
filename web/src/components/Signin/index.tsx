@@ -22,14 +22,14 @@ export function Singin() {
     <Container>
       <form onSubmit={handleAuthentication}>
         <img src={hublocalGif} alt="" />
-        <TextField 
-          placeholder="E-mail"
+        <TextField
+          label="E-mail"
           type="email"
           onChange={(event) => setEmailAuthentication(event.target.value)} />
 
         <TextField 
-          placeholder="Senha"
           type="password"
+          label="Senha"
           onChange={(event) => setPasswordAuthentication(event.target.value)} />
         <Button type="submit">Entrar</Button>
         <span>Não é cadastrado? Crie sua conta <Link to='/signup'>aqui</Link>.</span>

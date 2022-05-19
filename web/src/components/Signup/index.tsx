@@ -2,15 +2,26 @@ import { Container } from "../Signin/style";
 
 import hublocalGif from '../../assets/signin/hublocal-logo-animated.gif';
 import { Button, TextField } from "@mui/material";
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 
 export function Signup() {
+  const [nameAuthentication, setNameAuthentication] = useState<string | null>(null);
   const [emailAuthentication, setEmailAuthentication] = useState<string | null>(null);
   const [passwordAuthentication, setPasswordAuthentication] = useState<string | null>(null);
   
+  function handleSignup(event: FormEvent) {
+    event.preventDefault();
+
+    console.log({
+      name: nameAuthentication,
+      password: passwordAuthentication,
+      email: emailAuthentication
+    });
+  }
+
   return (
     <Container>
-      <form>
+      <form onSubmit={handleSignup}>
         <img src={hublocalGif} alt="" />
         <h2>Efetue o seu cadastro</h2>
 
@@ -18,7 +29,7 @@ export function Signup() {
           placeholder="Ex: Maria José da Silva"
           type="text"
           label="Nome completo"
-          onChange={(event) => setEmailAuthentication(event.target.value)} />
+          onChange={(event) => setNameAuthentication(event.target.value)} />
 
         <TextField 
           type="password"
