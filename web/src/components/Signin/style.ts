@@ -1,24 +1,27 @@
 import styled from "@emotion/styled";
 
+import backgroundImage from '../../assets/signin/background-login.jpeg';
+
 export const Container = styled.div`
-  border: 1px solid red;
 
   display: flex;
   align-items: center;
   justify-content: center;
   height: 100vh;
   align-items: center;
+  background: #4884fc;
 
   form {
+    border-radius: 1rem;
     background: #fbfbfb;
     display: flex;
+    justify-content: center;
     flex-direction: column;
-    border: 1px solid green;
-    height: 45%;
+    height: auto;
     width: 80%;
     max-width: 350px;
     gap: 1rem;
-    padding: 1rem;
+    padding: 2rem;
     
     img {
       margin: auto;
@@ -35,6 +38,10 @@ export const Container = styled.div`
     button {
       background: #5fcc00;
       color: white;
+    }
+
+    button:hover {
+      background: #5fcc55;
     }
 
     span > a {
