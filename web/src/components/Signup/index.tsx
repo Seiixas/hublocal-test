@@ -32,16 +32,16 @@ export function Signup() {
           onChange={(event) => setNameAuthentication(event.target.value)} />
 
         <TextField 
-          type="password"
-          label="Senha"
-          helperText="Necessário 5 caracteres"
-          onChange={(event) => setPasswordAuthentication(event.target.value)} />
-
-        <TextField 
           placeholder="Ex: maria@jose.com"
           label="E-mail"
           type="email"
           onChange={(event) => setEmailAuthentication(event.target.value)} />
+
+        <TextField 
+          type="password"
+          label="Senha"
+          helperText="Necessário 5 caracteres"
+          onChange={(event) => setPasswordAuthentication(event.target.value)} />
         <Button type="submit">Cadastrar</Button>
       </form>
     </Container>
