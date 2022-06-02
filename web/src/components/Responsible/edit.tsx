@@ -116,7 +116,7 @@ const brazilianStates = [
   },
 ];
 
-export function CreateCompany() {
+export function EditResponsible() {
 
   async function handleCEP() {
     const { data } = await axios.get('https://viacep.com.br/ws/01001000/json/');
@@ -130,81 +130,10 @@ export function CreateCompany() {
     <CreateCompanyContainer>
       <header>
         <Apartment fontSize="large"/>
-        <h1>Cadastro de Empresa</h1>
+        <h1>Cadastro de Responsável</h1>
      </header>
 
      <form action="">
-       <h2>Empresa</h2>
-       <span>Insira os dados relacionados à empresa</span>
-       <hr />
-       <TextField 
-          placeholder="Ex: Compania Anônima S/A"
-          type="text"
-          label="Nome" />
-
-         <TextField 
-          type="number"
-          label="CNPJ"
-          placeholder="Apenas números" />
-
-        <TextField 
-          placeholder="Esta empresa lida com materias manutenção de computadores e impressoras."
-          label="Descrição"
-          type="text"
-          multiline />
-
-        <h2>Local</h2>
-        <span>Insira os dados relacionados à localização da empresa</span>
-        <hr />
-        <TextField 
-          placeholder="Ex: Matriz"
-          type="text"
-          label="Nome" />
-
-        <TextField 
-          placeholder="Apenas números"
-          type="number"
-          label="CEP" />
-
-        <TextField 
-          placeholder="Ex: Av. Pinheiro da Silva"
-          type="text"
-          label="Logradouro" />
-
-        <TextField 
-          placeholder="Ex: Apartamento 105"
-          type="text"
-          label="Complemento" />
-
-         <TextField 
-            placeholder="Ex: Centro"
-            type="text"
-            label="Bairro" />
-
-        <TextField 
-          placeholder="Ex: 280A"
-          type="text"
-          label="Número" />
-        
-        <TextField 
-          placeholder="Ex: São Paulo"
-          type="text"
-          label="Cidade" />
-        
-        <TextField
-          id="outlined-select-currency"
-          select
-          label="Estado"
-          value={brazilianStates}
-        >
-          {brazilianStates.map((option) => (
-            <MenuItem key={option.value} value={option.value}>
-              {option.label}
-            </MenuItem>
-          ))}
-        </TextField>
-
-      
         <h2>Responsáveis</h2>
         <span>Insira os dados relacionados ao responsável</span>
 
@@ -238,11 +167,6 @@ export function CreateCompany() {
             type="text"
             label="Bairro" />
 
-        <TextField 
-          placeholder="Ex: 280A"
-          type="text"
-          label="Número" />
-        
         <TextField
           id="outlined-select-currency"
           select
@@ -255,6 +179,11 @@ export function CreateCompany() {
             </MenuItem>
           ))}
         </TextField>
+
+        <TextField 
+          placeholder="Ex: 280A"
+          type="text"
+          label="Número" />
         
         <TextField 
           placeholder="Ex: São Paulo"

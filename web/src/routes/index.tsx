@@ -8,6 +8,9 @@ import { Places } from "../components/Places";
 import { Singin } from "../components/Signin";
 import { Signup } from "../components/Signup";
 import { EditPlace } from "../components/Places/edit";
+import { Responsible } from "../components/Responsible";
+import { CreateResponsible } from "../components/Responsible/create";
+import { EditResponsible } from "../components/Responsible/edit";
 
 export function Paths() {
   return (
@@ -20,6 +23,10 @@ export function Paths() {
         <Route path="/places" element={<Places />} />
         <Route path="/places/create" element={<CreatePlace />} />
         <Route path="/places/edit" element={<EditPlace />} />
+
+        <Route path="/responsible" element={<Responsible />} />
+        <Route path="/responsible/create" element={<CreateResponsible />} />
+        <Route path="/responsible/edit" element={<EditResponsible />} />
 
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/signin" element={<Singin />} />
