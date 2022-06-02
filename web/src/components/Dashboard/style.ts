@@ -7,6 +7,7 @@ export const Container = styled.main`
     "companies person",
     "places tickets",
   ;
+  grid-gap: 1rem;
 
   button {
     padding: 1rem;
@@ -16,7 +17,6 @@ export const Container = styled.main`
     display: flex;
     justify-content: left;
     width: 100%;
-    margin-bottom: 1rem;
 
     header {
       margin-left: .5rem;
@@ -33,7 +33,7 @@ export const Container = styled.main`
   .companies {
     grid-area: companies;
   }
-  
+
   svg {
     background-color: #4884fc;
     color: white;
