@@ -116,7 +116,7 @@ const brazilianStates = [
   },
 ];
 
-export function Create() {
+export function CreateCompany() {
 
   async function handleCEP() {
     const { data } = await axios.get('https://viacep.com.br/ws/01001000/json/');
