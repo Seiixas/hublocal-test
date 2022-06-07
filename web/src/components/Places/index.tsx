@@ -1,36 +1,42 @@
 import { Box, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from "@material-ui/core";
 import { Add, Delete, Edit, Search, Visibility } from "@material-ui/icons";
 import { Autocomplete } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { api } from "../../lib/api";
 import { Container } from "./style";
-
-const fakeData = [
-  { 
-    id: 'fake-id',
-    public_place: 'Rua Alo da Silva',
-    district: 'Centro',
-    state: 'MG',
-    city: 'Januária',
-    cep: '39480000'
-  }
-]
 
 const options = [
   { label: 'The Godfather', id: 1 },
   { label: 'Pulp Fiction', id: 2 },
 ];
 
+interface IPlace {
+  id: string;
+  name: string;
+  public_place: string;
+  complement: string;
+  district: string;
+  city: string;
+  state: string;
+  cep: string;
+  number: string;
+  company_id: string;
+}
+
 export function Places() {
-  const [isViewOpened, setIsViewOpened] = useState(false);
 
-  function handleOpenView() {
-    setIsViewOpened(true);
-  }
+  const [places, setPlaces] = useState<IPlace[]>([]);
 
-  function handleCloseView() {
-    setIsViewOpened(false);
-  }
+  useEffect(() => {
+    const fetchPlacesData = async () => {
+      const response = await api.get('/places');
+      setPlaces(response.data);
+    }
+  
+    fetchPlacesData()
+      .catch(console.error);
+  }, []);
 
   return (
     <Container>
@@ -68,7 +74,7 @@ export function Places() {
           </TableHead>
           <TableBody>
             {
-              fakeData.map((row) => (
+              places.map((row) => (
                 <TableRow key={row.id}>
                   <TableCell>{row.public_place}</TableCell>
                   <TableCell>{row.district}</TableCell>
@@ -76,10 +82,12 @@ export function Places() {
                   <TableCell>{row.state}</TableCell>
                   <TableCell>{row.cep}</TableCell>
                   <TableCell align="center">
-                    <Button onClick={handleOpenView}>
-                      <Visibility />
-                    </Button>
-                    <Link to="/places/edit">
+                    <Link to={`/places/${row.id}`}>
+                      <Button>
+                        <Visibility />
+                      </Button>
+                    </Link>
+                    <Link to={`/places/edit/${row.id}`}>
                       <Button>
                           <Edit />
                       </Button>

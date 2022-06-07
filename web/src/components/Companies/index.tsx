@@ -1,23 +1,44 @@
 import { Box, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from "@material-ui/core";
 import { Add, Delete, Edit, Search, Visibility } from "@material-ui/icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { api } from "../../lib/api";
 import { Container } from "./style";
-import { View } from "./view";
 
-const fakeData = [
-  { id: 'fake-id', name: 'IFNMG - Campus Januária', description: 'Empresa séria', CNPJ: 'xxx-xxx-xxx-xx' }
-]
+interface ICompany {
+  id: string;
+  name: string;
+  description: string;
+  CNPJ: string;
+}
 
 export function Companies() {
-  const [isViewOpened, setIsViewOpened] = useState(false);
+  const [companies, setCompanies] = useState<ICompany[]>([]); 
 
-  function handleOpenView() {
-    setIsViewOpened(true);
-  }
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await api.get('/companies');
+      setCompanies(response.data);
+      console.log(companies);
+    }
+  
+    // call the function
+    fetchData()
+      // make sure to catch any error
+      .catch(console.error);
+  }, []);
 
-  function handleCloseView() {
-    setIsViewOpened(false);
+  async function handleDeleteCompany(id: string) {
+    const company = companies.find((company) => company.id === id);
+    const iwant = confirm(`Realmente deseja deletar a empresa ${company?.name}?`);
+
+    if (iwant) {
+      const response = await api.delete(`/companies/${id}`);
+      
+      if (response.status === 204) {
+        alert(`${company?.name} deletada com sucesso!`)
+      }
+    }
   }
 
   return (
@@ -43,7 +64,6 @@ export function Companies() {
             </div>
         </div>
       </header>
-      {isViewOpened && <View closeView={() => handleCloseView()} />}
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
@@ -56,21 +76,23 @@ export function Companies() {
           </TableHead>
           <TableBody>
             {
-              fakeData.map((row) => (
+              companies.map((row) => (
                 <TableRow key={row.id}>
                   <TableCell>{row.name}</TableCell>
                   <TableCell>{row.description}</TableCell>
                   <TableCell>{row.CNPJ}</TableCell>
                   <TableCell align="center">
-                    <Button onClick={handleOpenView} disabled={isViewOpened}>
-                      <Visibility />
-                    </Button>
-                    <Link to="/companies/edit">
+                    <Link to={`/companies/${row.id}`}>
+                      <Button>
+                          <Visibility />
+                      </Button>
+                    </Link>
+                    <Link to={`/companies/edit/${row.id}`}>
                       <Button>
                           <Edit />
                       </Button>
                     </Link>
-                    <Button>
+                    <Button onClick={() => handleDeleteCompany(row.id)}>
                       <Delete />
                     </Button>
                   </TableCell>

@@ -9,9 +9,9 @@ class CreateCompanyController {
 
     const createCompanyUseCase = container.resolve(CreateCompanyUseCase);
 
-    await createCompanyUseCase.execute({ name, description, CNPJ });
+    const { id } = await createCompanyUseCase.execute({ name, description, CNPJ });
 
-    return response.status(201).send();
+    return response.status(201).json({id});
   }
 }
 

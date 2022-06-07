@@ -3,20 +3,33 @@ import { Container } from "../Signin/style";
 import hublocalGif from '../../assets/signin/hublocal-logo-animated.gif';
 import { Button, TextField } from "@mui/material";
 import { FormEvent, useState } from "react";
+import { api } from "../../lib/api";
 
 export function Signup() {
   const [nameAuthentication, setNameAuthentication] = useState<string | null>(null);
   const [emailAuthentication, setEmailAuthentication] = useState<string | null>(null);
   const [passwordAuthentication, setPasswordAuthentication] = useState<string | null>(null);
   
-  function handleSignup(event: FormEvent) {
+  async function handleSignup(event: FormEvent) {
     event.preventDefault();
 
-    console.log({
-      name: nameAuthentication,
-      password: passwordAuthentication,
-      email: emailAuthentication
-    });
+    try {
+      const response = await api.post('/users', {
+        email: emailAuthentication,
+        password: passwordAuthentication,
+        name: nameAuthentication
+      });
+
+      if (response.status === 201) {
+        alert('Account created successfully');
+        setEmailAuthentication(null);
+        setNameAuthentication(null);
+        setPasswordAuthentication(null);
+      }
+    } catch (err: any) {
+      const { message } = err.response.data;
+      alert(message);
+    }
   }
 
   return (

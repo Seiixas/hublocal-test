@@ -2,7 +2,9 @@ import { Box, MenuItem, Tab, Tabs } from '@material-ui/core';
 import { Apartment } from '@material-ui/icons';
 import { Button, TextField } from '@mui/material';
 import axios from 'axios';
-import { useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { api } from '../../lib/api';
 import { CreateCompanyContainer } from './style';
 
 const brazilianStates = [
@@ -117,12 +119,77 @@ const brazilianStates = [
 ];
 
 export function EditResponsible() {
+  const params = useParams();
 
-  async function handleCEP() {
-    const { data } = await axios.get('https://viacep.com.br/ws/01001000/json/');
+  const [responsibleName, setResponsibleName] = useState<string | null>('');
+  const [phoneNumber, setPhoneNumber] = useState<string | null>('');
+  const [responsibleCep, setResponsibleCep] = useState<string | null>('');
+  const [responsiblePublicPlace, setResponsiblePublicPlace] = useState<string | null>('');
+  const [responsibleComplement, setResponsibleComplement] = useState<string | null>('');
+  const [responsibleDistrict, setResponsibleDistrict] = useState<string | null>('');
+  const [responsibleNumber, setResponsibleNumber] = useState<string | null>('');
+  const [responsibleState, setResponsibleState] = useState<string | null>('');
+  const [responsibleCity, setResponsibleCity] = useState<string | null>('');
 
-    console.log(data);
+  async function handleSubmit(event: FormEvent) {
+    event.preventDefault();
+    try {
+      const response = await api.put(`/responsibles/${params.id}`, {
+        name: responsibleName,
+        phone_number: phoneNumber,
+        cep: responsibleCep,
+        public_place: responsiblePublicPlace,
+        complement: responsibleComplement,
+        district: responsibleDistrict,
+        number: responsibleNumber,
+        state: responsibleState,
+        city: responsibleCity,
+      });
+
+      if (response.status === 204) {
+        alert('Responsável editado com sucesso!');
+      }
+    } catch (err: any) {
+      alert(err.response.data.message);
+    }
+    
   }
+
+  async function handleCEPResponsible(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
+    setResponsibleCep(event.target.value);
+    if (responsibleCep?.length === 8) {
+      const response = await axios.get(`https://viacep.com.br/ws/${responsibleCep}/json/`);
+
+      if (response.data.error === 'true') {
+        alert('CEP inválido!');
+      } else {
+        setResponsiblePublicPlace(response.data.logradouro);
+        setResponsibleComplement(response.data.complemento);
+        setResponsibleDistrict(response.data.bairro);
+        setResponsibleCity(response.data.localidade);
+        setResponsibleState(response.data.uf);
+      }    
+    }
+  }
+
+  useEffect(() => {
+    const fetchCompaniesData = async () => {
+      const response = await api.get(`/responsibles/${params.id}`);
+
+      setResponsibleName(response.data.name);
+      setPhoneNumber(response.data.phone_number);
+      setResponsibleCep(response.data.cep);
+      setResponsiblePublicPlace(response.data.public_place);
+      setResponsibleComplement(response.data.complement);
+      setResponsibleDistrict(response.data.district);
+      setResponsibleNumber(response.data.number);
+      setResponsibleState(response.data.state);
+      setResponsibleCity(response.data.city);
+    }
+
+    fetchCompaniesData()
+      .catch(console.error);
+  }, []);
 
   return (
     <>
@@ -133,45 +200,67 @@ export function EditResponsible() {
         <h1>Cadastro de Responsável</h1>
      </header>
 
-     <form action="">
+     <form onSubmit={handleSubmit}>
         <h2>Responsáveis</h2>
         <span>Insira os dados relacionados ao responsável</span>
 
         <TextField 
           placeholder="Ex: Matriz"
           type="text"
-          label="Nome" />
+          label="Nome"
+          value={responsibleName}
+          onChange={(event) => setResponsibleName(event.target.value)} />
         
         <TextField 
           placeholder="Ex: XXYYYYYZZZZ"
           type="number"
-          label="Telefone" />
+          label="Telefone"
+          value={phoneNumber}
+          onChange={(event) => setPhoneNumber(event.target.value)} />
 
         <TextField 
           placeholder="Apenas números"
           type="number"
-          label="CEP" />
+          label="CEP"
+          value={responsibleCep}
+          onChange={(event) => handleCEPResponsible(event)} />
 
         <TextField 
           placeholder="Ex: Av. Pinheiro da Silva"
           type="text"
-          label="Logradouro" />
+          label="Logradouro" 
+          value={responsiblePublicPlace}
+          onChange={(event) => setResponsiblePublicPlace(event.target.value)}/>
 
         <TextField 
           placeholder="Ex: Apartamento 105"
           type="text"
-          label="Complemento" />
+          label="Complemento"
+          value={responsibleComplement}
+          onChange={(event) => setResponsibleComplement(event.target.value)} />
 
          <TextField 
             placeholder="Ex: Centro"
             type="text"
-            label="Bairro" />
+            label="Bairro"
+            value={responsibleDistrict}
+            onChange={(event) => setResponsibleDistrict(event.target.value)} />
 
+        <TextField 
+          placeholder="Ex: 280A"
+          type="text"
+          label="Número"
+          value={responsibleNumber}
+          onChange={(event) => setResponsibleNumber(event.target.value)} />
+        
         <TextField
           id="outlined-select-currency"
           select
           label="Estado"
-          value={brazilianStates}
+          value={responsibleState}
+          disabled
+          required
+          onChange={(event) => setResponsibleState(event.target.value)}
         >
           {brazilianStates.map((option) => (
             <MenuItem key={option.value} value={option.value}>
@@ -179,16 +268,15 @@ export function EditResponsible() {
             </MenuItem>
           ))}
         </TextField>
-
-        <TextField 
-          placeholder="Ex: 280A"
-          type="text"
-          label="Número" />
         
         <TextField 
           placeholder="Ex: São Paulo"
           type="text"
-          label="Cidade" />
+          label="Cidade"
+          disabled
+          required
+          value={responsibleCity}
+          onChange={(event) => setResponsibleCity(event.target.value)} />
         <Button type="submit">Cadastrar</Button>
      </form>
       

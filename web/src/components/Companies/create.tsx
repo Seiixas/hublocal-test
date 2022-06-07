@@ -2,7 +2,8 @@ import { Box, MenuItem, Tab, Tabs } from '@material-ui/core';
 import { Apartment } from '@material-ui/icons';
 import { Button, TextField } from '@mui/material';
 import axios from 'axios';
-import { useState } from 'react';
+import React, { FormEvent, useState } from 'react';
+import { api } from '../../lib/api';
 import { CreateCompanyContainer } from './style';
 
 const brazilianStates = [
@@ -52,7 +53,7 @@ const brazilianStates = [
   },
   {
     value: 'MS',
-    label: 'Mato Grosso do MS',
+    label: 'Mato Grosso do Sul',
   },
   {
     value: 'MG',
@@ -118,39 +119,137 @@ const brazilianStates = [
 
 export function CreateCompany() {
 
-  async function handleCEP() {
-    const { data } = await axios.get('https://viacep.com.br/ws/01001000/json/');
+  const [name, setName] = useState<string | null>(null);
+  const [description, setDescription] = useState<string | null>(null);
+  const [cnpj, setCnpj] = useState<string | null>(null);
 
-    console.log(data);
+  const [placeName, setPlaceName] = useState<string | null>('');
+  const [cep, setCep] = useState<string>('');
+  const [publicPlace, setPublicPlace] = useState<string | null>('');
+  const [complement, setComplement] = useState<string | null>('');
+  const [district, setDistrict] = useState<string | null>('');
+  const [number, setNumber] = useState<string | null>('');
+  const [state, setState] = useState<string | null>('');
+  const [city, setCity] = useState<string | null>('');
+
+  const [responsibleName, setResponsibleName] = useState<string | null>(null);
+  const [phoneNumber, setPhoneNumber] = useState<string | null>(null);
+  const [responsibleCep, setResponsibleCep] = useState<string | null>(null);
+  const [responsiblePublicPlace, setResponsiblePublicPlace] = useState<string | null>(null);
+  const [responsibleComplement, setResponsibleComplement] = useState<string | null>(null);
+  const [responsibleDistrict, setResponsibleDistrict] = useState<string | null>(null);
+  const [responsibleNumber, setResponsibleNumber] = useState<string | null>(null);
+  const [responsibleState, setResponsibleState] = useState<string | null>('');
+  const [responsibleCity, setResponsibleCity] = useState<string | null>(null);
+
+  async function handleCEP(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
+    setCep(event.target.value);
+    if (cep?.length === 8) {
+      const response = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
+
+      if (response.data.error === 'true') {
+        alert('CEP inválido!');
+      } else {
+        setPublicPlace(response.data.logradouro);
+        setComplement(response.data.complemento);
+        setDistrict(response.data.bairro);
+        setCity(response.data.localidade);
+        setState(response.data.uf);
+      }    
+    }
+  }
+
+  async function handleCEPResponsible(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
+    setResponsibleCep(event.target.value);
+    if (responsibleCep?.length === 8) {
+      const response = await axios.get(`https://viacep.com.br/ws/${responsibleCep}/json/`);
+
+      if (response.data.error === 'true') {
+        alert('CEP inválido!');
+      } else {
+        setResponsiblePublicPlace(response.data.logradouro);
+        setResponsibleComplement(response.data.complemento);
+        setResponsibleDistrict(response.data.bairro);
+        setResponsibleCity(response.data.localidade);
+        setResponsibleState(response.data.uf);
+      }    
+    }
+  }
+
+  async function handleSubmit(event: FormEvent) {
+    event.preventDefault();
+
+    try {
+      const response = await api.post('/companies', {
+        name,
+        description,
+        CNPJ: cnpj
+      });
+  
+      const { id } = response.data;
+
+      await api.post('/places', {
+        name: placeName,
+        cep,
+        public_place: publicPlace,
+        complement,
+        district,
+        state,
+        city,
+        number,
+        company_id: id
+      });
+  
+      await api.post('/responsibles', {
+        name: responsibleName,
+        phone_number: phoneNumber,
+        cep: responsibleCep,
+        public_place: responsiblePublicPlace,
+        complement: responsibleComplement,
+        district: responsibleDistrict,
+        number: responsibleNumber,
+        state: responsibleState,
+        city: responsibleCity,
+        company_id: id
+      });
+    } catch (err: any) {
+      alert(err.response.data.message);
+    }
+
   }
 
   return (
     <>
-    
     <CreateCompanyContainer>
       <header>
         <Apartment fontSize="large"/>
         <h1>Cadastro de Empresa</h1>
      </header>
 
-     <form action="">
+     <form onSubmit={handleSubmit}>
        <h2>Empresa</h2>
        <span>Insira os dados relacionados à empresa</span>
        <hr />
        <TextField 
           placeholder="Ex: Compania Anônima S/A"
           type="text"
-          label="Nome" />
+          label="Nome"
+          required
+          onChange={(event) => setName(event.target.value)} />
 
          <TextField 
           type="number"
           label="CNPJ"
-          placeholder="Apenas números" />
+          placeholder="Apenas números"
+          required
+          onChange={(event) => setCnpj(event.target.value)} />
 
         <TextField 
           placeholder="Esta empresa lida com materias manutenção de computadores e impressoras."
           label="Descrição"
           type="text"
+          required
+          onChange={(event) => setDescription(event.target.value)}
           multiline />
 
         <h2>Local</h2>
@@ -159,43 +258,62 @@ export function CreateCompany() {
         <TextField 
           placeholder="Ex: Matriz"
           type="text"
-          label="Nome" />
+          label="Nome"
+          required
+          onChange={(event) => setPlaceName(event.target.value)} />
 
         <TextField 
           placeholder="Apenas números"
           type="number"
-          label="CEP" />
+          label="CEP"
+          required
+          onChange={(event) => { handleCEP(event) }} />
 
         <TextField 
           placeholder="Ex: Av. Pinheiro da Silva"
           type="text"
-          label="Logradouro" />
+          label="Logradouro"
+          value={publicPlace}
+          required
+          onChange={(event) => setPublicPlace(event.target.value)} />
 
         <TextField 
           placeholder="Ex: Apartamento 105"
           type="text"
-          label="Complemento" />
+          label="Complemento"
+          value={complement}
+          onChange={(event) => setComplement(event.target.value)} />
 
          <TextField 
             placeholder="Ex: Centro"
             type="text"
-            label="Bairro" />
+            label="Bairro"
+            value={district}
+            required
+            onChange={(event) => setDistrict(event.target.value)} />
 
         <TextField 
           placeholder="Ex: 280A"
           type="text"
-          label="Número" />
+          label="Número"
+          required
+          onChange={(event) => setNumber(event.target.value)} />
         
         <TextField 
           placeholder="Ex: São Paulo"
           type="text"
-          label="Cidade" />
+          label="Cidade"
+          value={city}
+          disabled
+          onChange={(event) => setCity(event.target.value)} />
         
         <TextField
           id="outlined-select-currency"
           select
           label="Estado"
-          value={brazilianStates}
+          value={state}
+          disabled
+          onChange={(event) => setState(event.target.value)}
         >
           {brazilianStates.map((option) => (
             <MenuItem key={option.value} value={option.value}>
@@ -211,43 +329,59 @@ export function CreateCompany() {
         <TextField 
           placeholder="Ex: Matriz"
           type="text"
-          label="Nome" />
+          label="Nome"
+          required
+          onChange={(event) => setResponsibleName(event.target.value)} />
         
         <TextField 
           placeholder="Ex: XXYYYYYZZZZ"
           type="number"
-          label="Telefone" />
+          label="Telefone"
+          required
+          onChange={(event) => setPhoneNumber(event.target.value)} />
 
         <TextField 
           placeholder="Apenas números"
           type="number"
-          label="CEP" />
+          label="CEP"
+          required
+          onChange={(event) => handleCEPResponsible(event)} />
 
         <TextField 
           placeholder="Ex: Av. Pinheiro da Silva"
           type="text"
-          label="Logradouro" />
+          label="Logradouro" 
+          required
+          onChange={(event) => setResponsiblePublicPlace(event.target.value)}/>
 
         <TextField 
           placeholder="Ex: Apartamento 105"
           type="text"
-          label="Complemento" />
+          label="Complemento"
+          onChange={(event) => setResponsibleComplement(event.target.value)} />
 
          <TextField 
             placeholder="Ex: Centro"
             type="text"
-            label="Bairro" />
+            label="Bairro"
+            required
+            onChange={(event) => setResponsibleDistrict(event.target.value)} />
 
         <TextField 
           placeholder="Ex: 280A"
           type="text"
-          label="Número" />
+          label="Número"
+          required
+          onChange={(event) => setResponsibleNumber(event.target.value)} />
         
         <TextField
           id="outlined-select-currency"
           select
           label="Estado"
-          value={brazilianStates}
+          value={responsibleState}
+          disabled
+          required
+          onChange={(event) => setResponsibleState(event.target.value)}
         >
           {brazilianStates.map((option) => (
             <MenuItem key={option.value} value={option.value}>
@@ -259,7 +393,11 @@ export function CreateCompany() {
         <TextField 
           placeholder="Ex: São Paulo"
           type="text"
-          label="Cidade" />
+          label="Cidade"
+          disabled
+          required
+          value={responsibleCity}
+          onChange={(event) => setResponsibleCity(event.target.value)} />
         <Button type="submit">Cadastrar</Button>
      </form>
       

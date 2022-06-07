@@ -4,18 +4,24 @@ import hublocalGif from '../../assets/signin/hublocal-logo-animated.gif';
 import { Button, TextField } from "@mui/material";
 import { FormEvent, useState } from "react";
 import { Link } from "react-router-dom";
+import { api } from "../../lib/api";
 
 export function Singin() {
   const [emailAuthentication, setEmailAuthentication] = useState<string | null>(null);
   const [passwordAuthentication, setPasswordAuthentication] = useState<string | null>(null);
 
-  function handleAuthentication(event: FormEvent) {
+  async function handleAuthentication(event: FormEvent) {
     event.preventDefault();
 
-    console.log({
-      email: emailAuthentication,
-      password: passwordAuthentication
-    });
+    try {
+      const response = await api.post('/users/auth', {
+        email: emailAuthentication,
+        password: passwordAuthentication
+      });
+    } catch (err: any) {
+      const { message } = err.response.data;
+      alert(message);
+    }
   }
 
   return (

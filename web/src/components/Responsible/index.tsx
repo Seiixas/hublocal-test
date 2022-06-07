@@ -1,26 +1,76 @@
 import { Box, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from "@material-ui/core";
 import { Add, Check, Close, Delete, Edit, Search, Visibility } from "@material-ui/icons";
 import { Autocomplete } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { api } from "../../lib/api";
 import { Container } from "./style";
-
-const fakeData = [
-  { 
-    id: 'fake-id',
-    name: 'Mateus Silva Seixas',
-    phone_number: '38984120975',
-    is_main: true,
-  }
-]
 
 const options = [
   { label: 'The Godfather', id: 1 },
   { label: 'Pulp Fiction', id: 2 },
 ];
 
+interface ICompany {
+  id: string;
+  label: string;
+}
+
+interface IResponsible {
+  id: string;
+  name: string;
+  phone_number: string;
+  public_place: string;
+  is_main: boolean;
+  complement: string;
+  state: string;
+  city: string;
+  cep: string;
+  number: string;
+  company_id: string;
+}
+
 export function Responsible() {
   const [isViewOpened, setIsViewOpened] = useState(false);
+
+  const [responsible, setResponsible] = useState<IResponsible[]>([]);
+  const [companies, setCompanies] = useState<ICompany[]>([]);
+
+  useEffect(() => {
+    const fetchResponsibleData = async () => {
+      const response = await api.get('/responsibles');
+      setResponsible(response.data);
+    }
+    
+    const fetchCompaniesData = async () => {
+      const response = await api.get('/companies');
+      const companiesFormatted = response.data.map((datum: any) => {
+        return {
+          'id': datum.id,
+          'label': datum.name
+        }
+      });
+      setCompanies(companiesFormatted);
+    }
+  
+    fetchResponsibleData()
+      .catch(console.error);
+    fetchCompaniesData()
+      .catch(console.error);
+  }, []);
+
+  async function handleDeleteResponsible(id: string) {
+    const responsibleToRemove = responsible.find((responsible) => responsible.id === id);
+    const iwant = confirm(`Realmente deseja deletar o responsável ${responsibleToRemove?.name}?`);
+
+    if (iwant) {
+      const response = await api.delete(`/responsibles/${id}`);
+      
+      if (response.status === 204) {
+        alert(`${responsibleToRemove?.name} deletada com sucesso!`)
+      }
+    }
+  }
 
   function handleOpenView() {
     setIsViewOpened(true);
@@ -38,7 +88,7 @@ export function Responsible() {
         <Autocomplete
           disablePortal
           id="combo-box-demo"
-          options={options}
+          options={companies}
           sx={{ width: 300 }}
           renderInput={(params) => <TextField {...params} label="Empresa" />}
         />
@@ -64,7 +114,7 @@ export function Responsible() {
           </TableHead>
           <TableBody>
             {
-              fakeData.map((row) => (
+              responsible.map((row) => (
                 <TableRow key={row.id}>
                   <TableCell>{row.name}</TableCell>
                   <TableCell>{row.phone_number}</TableCell>
@@ -73,12 +123,12 @@ export function Responsible() {
                     <Button onClick={handleOpenView}>
                       <Visibility />
                     </Button>
-                    <Link to="/responsible/edit">
+                    <Link to={`/responsible/edit/${row.id}`}>
                       <Button>
                           <Edit />
                       </Button>
                     </Link>
-                    <Button>
+                    <Button onClick={() => handleDeleteResponsible(row.id)}>
                       <Delete />
                     </Button>
                   </TableCell>
