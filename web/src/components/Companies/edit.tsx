@@ -17,8 +17,7 @@ export function Edit() {
     try {
       const response = await api.put(`/companies/${params.id}`, {
         name,
-        description,
-        CNPJ: cnpj
+        description
       });
       console.log(response);
     } catch (err: any) {
@@ -58,10 +57,11 @@ export function Edit() {
           value={name}
           onChange={(event) => setName(event.target.value)} />
 
-         <TextField 
+        <TextField 
           type="number"
           label="CNPJ"
           value={cnpj}
+          disabled
           placeholder="Apenas números"
           onChange={(event) => setCnpj(event.target.value)} />
 
