@@ -21,11 +21,17 @@ interface IPlace {
   state: string;
   cep: string;
   number: string;
-  company_id: string;
+  companyId: string;
+}
+
+interface ICompany {
+  id: string;
+  label: string;
 }
 
 export function Places() {
 
+  const [companies, setCompanies] = useState<ICompany[]>([]);
   const [places, setPlaces] = useState<IPlace[]>([]);
 
   useEffect(() => {
@@ -33,10 +39,47 @@ export function Places() {
       const response = await api.get('/places');
       setPlaces(response.data);
     }
+
+    const fetchCompaniesData = async () => {
+      const response = await api.get('/companies');
+      const companiesFormatted = response.data.map((datum: any) => {
+        return {
+          'id': datum.id,
+          'label': datum.name
+        }
+      });
+      setCompanies(companiesFormatted);
+    }
   
     fetchPlacesData()
       .catch(console.error);
+    fetchCompaniesData()
+      .catch(console.error);
   }, []);
+
+  function handleSearch(id: string) {
+    const place = places.filter((place) => place.companyId === id);
+
+    if (!place) {
+      alert('Companhia sem localização');
+      return;
+    }
+
+    setPlaces(place);
+  }
+
+  async function handleDeletePlace(id: string) {
+    const placeToRemove = places.find((place) => place.id === id);
+    const iwant = confirm(`Realmente deseja deletar o local ${placeToRemove?.name}?`);
+
+    if (iwant) {
+      const response = await api.delete(`/places/${id}`);
+      
+      if (response.status === 204) {
+        alert(`${placeToRemove?.name} deletada com sucesso!`)
+      }
+    }
+  }
 
   return (
     <Container>
@@ -46,7 +89,21 @@ export function Places() {
         <Autocomplete
           disablePortal
           id="combo-box-demo"
-          options={options}
+          onChange={(event, value) => { 
+            if (!value) {
+              const fetchResponsibleData = async () => {
+                const response = await api.get('/places');
+                setPlaces(response.data);
+          
+                console.log(response.data);
+              }
+
+              fetchResponsibleData();
+            } else {
+              handleSearch(value.id)
+            }
+          }} 
+          options={companies}
           sx={{ width: 300 }}
           renderInput={(params) => <TextField {...params} label="Empresa" />}
         />
@@ -92,7 +149,7 @@ export function Places() {
                           <Edit />
                       </Button>
                     </Link>
-                    <Button>
+                    <Button onClick={() => handleDeletePlace(row.id)}>
                       <Delete />
                     </Button>
                   </TableCell>

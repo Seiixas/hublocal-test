@@ -36,6 +36,9 @@ class Place {
   @ManyToOne(() => Company, (company) => company.places)
   company: Company;
 
+  @Column()
+  companyId: string;
+
   @OneToMany(() => Ticket, (ticket) => ticket.place)
   tickets: Ticket[];
 

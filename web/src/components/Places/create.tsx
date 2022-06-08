@@ -1,8 +1,8 @@
 import { Box, MenuItem, Tab, Tabs } from '@material-ui/core';
 import { Apartment, Place } from '@material-ui/icons';
-import { Button, TextField } from '@mui/material';
+import { Autocomplete, Button, TextField } from '@mui/material';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import { api } from '../../lib/api';
 import { CreateCompanyContainer } from './style';
 
@@ -117,7 +117,15 @@ const brazilianStates = [
   },
 ];
 
+interface ICompany {
+  id: string;
+  label: string;
+}
+
 export function CreatePlace() {
+
+  const [companies, setCompanies] = useState<ICompany[]>([]);
+  const [companyId, setCompanyId] = useState<string>('');
 
   const [placeName, setPlaceName] = useState<string | null>('');
   const [cep, setCep] = useState<string>('');
@@ -145,6 +153,50 @@ export function CreatePlace() {
     }
   }
 
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await api.get('/companies');
+      const companiesFormatted = response.data.map((datum: any) => {
+        return {
+          'id': datum.id,
+          'label': datum.name
+        }
+      });
+      setCompanies(companiesFormatted);
+    }
+
+    fetchData()
+      .catch((err) => console.log(err));
+  }, []);
+
+  async function handleSubmit(event: FormEvent) {
+    event.preventDefault();
+    try {
+      if (!companyId) {
+        alert('Selecione alguma empresa');
+        return;
+      }
+
+      const response = await api.post('/places', {
+        name: placeName,
+        cep: cep,
+        public_place: publicPlace,
+        complement: complement,
+        district: district,
+        number: number,
+        state: state,
+        city: city,
+        company_id: companyId
+      });
+
+      if (response.status === 201) {
+        alert('Local criado');
+      }
+    } catch (err: any) {
+      alert(err.response.data.message);
+    }
+  }
+
   return (
     <>
     
@@ -154,10 +206,18 @@ export function CreatePlace() {
           <h1>Cadastro de Local</h1>
         </header>
 
-      <form action="">
+      <form onSubmit={handleSubmit}>
           <h2>Local</h2>
           <span>Insira os dados relacionados à localização da empresa</span>
           <hr />
+          <Autocomplete
+            disablePortal
+            id="combo-box-demo"
+            options={companies}
+            renderInput={(params) => <TextField {...params} label="Empresa" />}
+            onChange={(e, value: any) => setCompanyId(value.id)}
+          />
+
           <TextField 
           placeholder="Ex: Matriz"
           type="text"

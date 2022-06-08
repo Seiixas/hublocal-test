@@ -41,6 +41,9 @@ class Responsible {
   @ManyToOne(() => Company, (company) => company.responsibles)
   company: Company;
 
+  @Column()
+  companyId: string;
+
   constructor(id?: string, is_main?: boolean) {
     this.id = id ?? uuidV4();
     this.is_main = is_main ?? false;

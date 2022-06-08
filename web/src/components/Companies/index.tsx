@@ -14,6 +14,7 @@ interface ICompany {
 
 export function Companies() {
   const [companies, setCompanies] = useState<ICompany[]>([]); 
+  const [search, setSearch] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -41,6 +42,17 @@ export function Companies() {
     }
   }
 
+  function handleSearch() {
+    const company = companies.find((company) => company.CNPJ === search);
+
+    if (!company) {
+      alert('Companhia inexistente');
+      return;
+    }
+
+    setCompanies([company]);
+  }
+
   return (
     <Container>
       <header>
@@ -49,8 +61,9 @@ export function Companies() {
           <TextField
             label="Buscar por CNPJ"
             placeholder="CNPJ"
-            type="email" />
-            <Button className="create">
+            type="email"
+            onChange={(event) => setSearch(event.target.value)} />
+            <Button className="create" onClick={handleSearch}>
                 <Search />
                 <span>Buscar</span>  
             </Button>

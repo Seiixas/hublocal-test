@@ -6,11 +6,6 @@ import { Link } from "react-router-dom";
 import { api } from "../../lib/api";
 import { Container } from "./style";
 
-const options = [
-  { label: 'The Godfather', id: 1 },
-  { label: 'Pulp Fiction', id: 2 },
-];
-
 interface ICompany {
   id: string;
   label: string;
@@ -27,12 +22,10 @@ interface IResponsible {
   city: string;
   cep: string;
   number: string;
-  company_id: string;
+  companyId: string;
 }
 
 export function Responsible() {
-  const [isViewOpened, setIsViewOpened] = useState(false);
-
   const [responsible, setResponsible] = useState<IResponsible[]>([]);
   const [companies, setCompanies] = useState<ICompany[]>([]);
 
@@ -72,12 +65,17 @@ export function Responsible() {
     }
   }
 
-  function handleOpenView() {
-    setIsViewOpened(true);
-  }
+  function handleSearch(id: string) {
+    const responsibles = responsible.filter((responsible) => responsible.companyId === id);
 
-  function handleCloseView() {
-    setIsViewOpened(false);
+    console.log(responsibles);
+
+    if (!responsibles) {
+      alert('Companhia sem responsáveis');
+      return;
+    }
+
+    setResponsible(responsibles);
   }
 
   return (
@@ -88,6 +86,20 @@ export function Responsible() {
         <Autocomplete
           disablePortal
           id="combo-box-demo"
+          onChange={(event, value) => { 
+            if (!value) {
+              const fetchResponsibleData = async () => {
+                const response = await api.get('/responsibles');
+                setResponsible(response.data);
+          
+                console.log(response.data);
+              }
+
+              fetchResponsibleData();
+            } else {
+              handleSearch(value.id)
+            }
+          }} 
           options={companies}
           sx={{ width: 300 }}
           renderInput={(params) => <TextField {...params} label="Empresa" />}
@@ -120,9 +132,12 @@ export function Responsible() {
                   <TableCell>{row.phone_number}</TableCell>
                   <TableCell>{row.is_main ? <Check /> : <Close />}</TableCell>
                   <TableCell align="center">
-                    <Button onClick={handleOpenView}>
-                      <Visibility />
-                    </Button>
+
+                    <Link to={`/responsible/${row.id}`}>
+                      <Button>
+                        <Visibility />
+                      </Button>
+                    </Link>
                     <Link to={`/responsible/edit/${row.id}`}>
                       <Button>
                           <Edit />

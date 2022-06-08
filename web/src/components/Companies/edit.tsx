@@ -1,6 +1,6 @@
 import { Apartment } from '@material-ui/icons';
 import { Button, TextField } from '@mui/material';
-import { FormEvent, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { api } from '../../lib/api';
 import { CreateCompanyContainer } from './style';
@@ -8,9 +8,9 @@ import { CreateCompanyContainer } from './style';
 export function Edit() {
   const params = useParams();
 
-  const [name, setName] = useState<string | null>(null);
-  const [description, setDescription] = useState<string | null>(null);
-  const [cnpj, setCnpj] = useState<string | null>(null);
+  const [name, setName] = useState<string>('');
+  const [description, setDescription] = useState<string>('');
+  const [cnpj, setCnpj] = useState<string>('');
 
   async function handleEditCompany(event: FormEvent) {
     event.preventDefault();
@@ -25,6 +25,18 @@ export function Edit() {
       alert(err.response.data.message);
     }
   }
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await api.get(`/companies/${params.id}`);
+      setName(response.data.name);
+      setDescription(response.data.description);
+      setCnpj(response.data.CNPJ);
+    }
+
+    fetchData()
+      .catch((err) => console.log(err.message))
+  }, []);
 
   return (
     <>
@@ -43,11 +55,13 @@ export function Edit() {
           placeholder="Ex: Compania Anônima S/A"
           type="text"
           label="Nome"
+          value={name}
           onChange={(event) => setName(event.target.value)} />
 
          <TextField 
           type="number"
           label="CNPJ"
+          value={cnpj}
           placeholder="Apenas números"
           onChange={(event) => setCnpj(event.target.value)} />
 
@@ -55,6 +69,7 @@ export function Edit() {
           placeholder="Esta empresa lida com materias manutenção de computadores e impressoras."
           label="Descrição"
           type="text"
+          value={description}
           multiline
           onChange={(event) => setDescription(event.target.value)} />
 
