@@ -2,7 +2,7 @@ import { Box, MenuItem, Tab, Tabs } from '@material-ui/core';
 import { Apartment, Place } from '@material-ui/icons';
 import { Button, TextField } from '@mui/material';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { api } from '../../lib/api';
 import { CreateCompanyContainer } from './style';
@@ -121,6 +121,8 @@ const brazilianStates = [
 export function EditPlace() {
   const params = useParams();
 
+  const [oldPlaceName, setOldPlaceName] = useState<string>('');
+
   const [placeName, setPlaceName] = useState<string | null>('');
   const [cep, setCep] = useState<string>('');
   const [publicPlace, setPublicPlace] = useState<string | null>('');
@@ -129,6 +131,7 @@ export function EditPlace() {
   const [number, setNumber] = useState<string | null>('');
   const [state, setState] = useState<string | null>('');
   const [city, setCity] = useState<string | null>('');
+  const [dataUpdated, setDataUpdated] = useState<string | null>('');
 
   async function handleCEP(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
     setCep(event.target.value);
@@ -147,6 +150,33 @@ export function EditPlace() {
     }
   }
 
+  async function handleSubmit(event: FormEvent) {
+    event.preventDefault();
+    try {
+      const response = await api.post(`/tickets`, {
+        title: oldPlaceName,
+        place_id: params.id,
+        cep: cep,
+        name: placeName,
+        public_place: publicPlace,
+        complement: complement,
+        district: district,
+        number: number,
+        state: state,
+        city: city,
+        data_updated: dataUpdated,
+        created_by: '926be774-646f-428d-b8ed-cc165b6e2689',
+        updated_by: '926be774-646f-428d-b8ed-cc165b6e2689'
+      });
+
+      if (response.status === 201) {
+        alert('Ticket criado! Aguarde atualização.');
+      }
+    } catch (err: any) {
+      alert(err.response.data.message);
+    }
+  }
+
   useEffect(() => {
     const fetchData = async () => {
       const response = await api.get(`/places/${params.id}`);
@@ -158,6 +188,8 @@ export function EditPlace() {
       setState(response.data.state);
       setNumber(response.data.number);
       setCep(response.data.cep);
+
+      setOldPlaceName(response.data.name);
     }
 
     fetchData()
@@ -174,7 +206,7 @@ export function EditPlace() {
           <h1>Atualizar Local</h1>
         </header>
 
-      <form action="">
+      <form onSubmit={handleSubmit}>
           <h2>Local</h2>
           <span>Insira os dados relacionados à localização da empresa</span>
           <hr />

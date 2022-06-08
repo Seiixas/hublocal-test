@@ -14,6 +14,8 @@ import { EditResponsible } from "../components/Responsible/edit";
 import { ViewCompany } from "../components/Companies/view";
 import { ViewPlace } from "../components/Places/view";
 import { ViewResponsible } from "../components/Responsible/view";
+import { Tickets } from "../components/Tickets";
+import { ViewTicket } from "../components/Tickets/view";
 
 export function Paths() {
   return (
@@ -44,6 +46,12 @@ export function Paths() {
         <Route path="/responsible/create" element={<CreateResponsible />} />
         <Route path="/responsible/edit" element={<EditResponsible />}>
           <Route path=":id" element={<EditResponsible />} />
+        </Route>
+
+
+        <Route path="/tickets" element={<Tickets />} />
+        <Route path="/tickets" element={<ViewTicket />}>
+          <Route path=":id" element={<ViewTicket/>} />
         </Route>
 
         <Route path="/dashboard" element={<Dashboard />} />

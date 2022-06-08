@@ -13,7 +13,14 @@ interface ICreateTicket {
 
   updated_by: string;
 
-  data_updated: string;
+  name: string;
+  public_place: string;
+  complement: string;
+  district: string;
+  city: string;
+  state: string;
+  cep: string;
+  number: string;
 }
 
 export { ICreateTicket };

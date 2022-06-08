@@ -37,7 +37,31 @@ class Ticket {
   updated_by: string;
 
   @Column()
-  data_updated: string;
+  name: string;
+
+  @Column()
+  public_place: string;
+
+  @Column()
+  complement: string;
+
+  @Column()
+  district: string;
+
+  @Column()
+  city: string;
+
+  @Column()
+  state: string;
+
+  @Column()
+  cep: string;
+
+  @Column()
+  number: string;
+
+  @Column()
+  placeId: string;
 
   constructor(id?: string) {
     this.id = id ?? uuidv4();

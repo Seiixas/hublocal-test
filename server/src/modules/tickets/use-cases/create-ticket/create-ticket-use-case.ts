@@ -10,6 +10,14 @@ interface IRequest {
   created_by: string;
   updated_by: string;
   data_updated: string;
+  name: string;
+  public_place: string;
+  complement: string;
+  district: string;
+  city: string;
+  state: string;
+  cep: string;
+  number: string;
 }
 
 @injectable()
@@ -26,6 +34,14 @@ class CreateTicketUseCase {
     created_by,
     updated_by,
     data_updated,
+    name,
+    public_place,
+    complement,
+    district,
+    city,
+    state,
+    cep,
+    number
   }: IRequest): Promise<Ticket> {
     const place = await this.placesRepository.findById(place_id);
 
@@ -38,7 +54,14 @@ class CreateTicketUseCase {
       place,
       created_by,
       updated_by,
-      data_updated,
+      name,
+      public_place,
+      complement,
+      district,
+      city,
+      state,
+      cep,
+      number
     });
 
     const { id } = ticket;

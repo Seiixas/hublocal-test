@@ -16,6 +16,7 @@ class UpdatePlaceController {
       state,
       cep,
       number,
+      company_id
     } = request.body;
 
     const updatePlaceUseCase = container.resolve(UpdatePlaceUseCase);
@@ -29,6 +30,7 @@ class UpdatePlaceController {
       city,
       state,
       cep,
+      company_id,
       number,
     });
 

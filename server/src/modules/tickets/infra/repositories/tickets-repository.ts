@@ -19,7 +19,14 @@ class TicketsRepository implements ITicketsRepository {
     place,
     created_by,
     updated_by,
-    data_updated,
+    name,
+    public_place,
+    complement,
+    district,
+    city,
+    state,
+    cep,
+    number,
   }: ICreateTicket): Promise<Ticket> {
     const ticket = this.repository.create({
       id,
@@ -28,7 +35,14 @@ class TicketsRepository implements ITicketsRepository {
       place,
       created_by,
       updated_by,
-      data_updated,
+      name,
+      public_place,
+      complement,
+      district,
+      city,
+      state,
+      cep,
+      number,
     });
 
     await this.repository.save(ticket);
