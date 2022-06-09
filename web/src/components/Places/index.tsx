@@ -1,9 +1,10 @@
 import { Box, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from "@material-ui/core";
-import { Add, Delete, Edit, Search, Visibility } from "@material-ui/icons";
-import { Autocomplete } from "@mui/material";
+import { Add, Delete, Edit, Place, Search, Visibility } from "@material-ui/icons";
+import { Autocomplete, SpeedDial, SpeedDialAction } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../../lib/api";
+import { handleChangePage } from "../../utils/chagePage";
 import { Container } from "./style";
 
 const options = [
@@ -83,6 +84,17 @@ export function Places() {
 
   return (
     <Container>
+      <SpeedDial
+        ariaLabel="SpeedDial basic example"
+        sx={{ position: 'absolute', bottom: 16, right: 16 }}
+        icon={<Place />}
+      >
+          <SpeedDialAction
+            icon={<Add />}
+            tooltipTitle="Novo local"
+            onClick={() => handleChangePage('/places/create')}
+          />
+      </SpeedDial>
       <header>
         <h2>Localizações</h2>
         <div className="search-bar">

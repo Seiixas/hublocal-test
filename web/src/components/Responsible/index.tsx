@@ -1,9 +1,10 @@
 import { Box, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from "@material-ui/core";
-import { Add, Check, Close, Delete, Edit, Search, Visibility } from "@material-ui/icons";
-import { Autocomplete } from "@mui/material";
+import { Add, Check, Close, Delete, Edit, Person, Search, Visibility } from "@material-ui/icons";
+import { Autocomplete, SpeedDial, SpeedDialAction } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../../lib/api";
+import { handleChangePage } from "../../utils/chagePage";
 import { Container } from "./style";
 
 interface ICompany {
@@ -80,6 +81,17 @@ export function Responsible() {
 
   return (
     <Container>
+      <SpeedDial
+        ariaLabel="SpeedDial basic example"
+        sx={{ position: 'absolute', bottom: 16, right: 16 }}
+        icon={<Person />}
+      >
+          <SpeedDialAction
+            icon={<Add />}
+            tooltipTitle="Novo local"
+            onClick={() => handleChangePage('/responsible/create')}
+          />
+      </SpeedDial>
       <header>
         <h2>Responsáveis</h2>
         <div className="search-bar">

@@ -1,8 +1,10 @@
-import { Box, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from "@material-ui/core";
-import { Add, Delete, Edit, Search, Visibility } from "@material-ui/icons";
+import { Box, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from "@material-ui/core";
+import { Add, Apartment, Create, Delete, Edit, Search, Visibility } from "@material-ui/icons";
+import { SpeedDial, SpeedDialAction, SpeedDialIcon } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../../lib/api";
+import { handleChangePage } from "../../utils/chagePage";
 import { Container } from "./style";
 
 interface ICompany {
@@ -55,8 +57,19 @@ export function Companies() {
 
   return (
     <Container>
+      <SpeedDial
+        ariaLabel="SpeedDial basic example"
+        sx={{ position: 'absolute', bottom: 16, right: 16 }}
+        icon={<Apartment />}
+      >
+          <SpeedDialAction
+            icon={<Add />}
+            tooltipTitle="Nova empresa"
+            onClick={() => handleChangePage('/companies/create')}
+          />
+      </SpeedDial>
       <header>
-        <h2>Empresas</h2>
+        <Typography variant="h4">Empresas</Typography>
         <div className="search-bar">
           <TextField
             label="Buscar por CNPJ"
