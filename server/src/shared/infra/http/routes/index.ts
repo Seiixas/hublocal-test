@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { ensureAuthenticated } from '../middlewares/ensureAuthenticated';
 
 import { companiesRoutes } from './companies.routes';
 import { placesRoutes } from './places.routes';
@@ -8,10 +9,10 @@ import { usersRoutes } from './users.routes';
 
 const routes = Router();
 
-routes.use('/companies', companiesRoutes);
-routes.use('/places', placesRoutes);
-routes.use('/responsibles', responsiblesRoutes);
-routes.use('/tickets', ticketsRoutes);
+routes.use('/companies', ensureAuthenticated, companiesRoutes);
+routes.use('/places', ensureAuthenticated, placesRoutes);
+routes.use('/responsibles', ensureAuthenticated, responsiblesRoutes);
+routes.use('/tickets', ensureAuthenticated, ticketsRoutes);
 routes.use('/users', usersRoutes);
 
 export { routes };

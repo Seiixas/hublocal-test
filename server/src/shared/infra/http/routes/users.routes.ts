@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { ensureAuthenticated } from '../middlewares/ensureAuthenticated';
 
 import { AuthenticateUserController } from '../../../../modules/accounts/use-cases/authenticate-user/authenticate-user-controller';
 import { CreateUserController } from '../../../../modules/accounts/use-cases/create-user/create-user-controller';
@@ -16,8 +17,8 @@ const updateUserController = new UpdateUserController();
 
 usersRoutes.post('/auth', authenticateController.handle);
 usersRoutes.post('/', createUserController.handle);
-usersRoutes.delete('/:id', removeUserController.handle);
-usersRoutes.get('/:id', showUserController.handle);
-usersRoutes.put('/:id', updateUserController.handle);
+usersRoutes.delete('/:id', ensureAuthenticated, removeUserController.handle);
+usersRoutes.get('/:id', ensureAuthenticated, showUserController.handle);
+usersRoutes.put('/:id', ensureAuthenticated, updateUserController.handle);
 
 export { usersRoutes };
