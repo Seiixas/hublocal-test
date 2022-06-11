@@ -27,24 +27,58 @@ interface IResponsible {
 }
 
 export function Responsible() {
+  const token = localStorage.getItem('token');
+
   const [responsible, setResponsible] = useState<IResponsible[]>([]);
   const [companies, setCompanies] = useState<ICompany[]>([]);
 
   useEffect(() => {
     const fetchResponsibleData = async () => {
-      const response = await api.get('/responsibles');
-      setResponsible(response.data);
+      try {
+        const response = await api.get('/responsibles', {
+          headers: {
+            Authorization: `Bearer ${token}` 
+          }
+        });
+        setResponsible(response.data);
+      } catch (err: any) {
+        const { status } = err.response;
+        
+        if (status === 401) {
+          alert('Sessão expirada');
+          localStorage.removeItem('token');
+          location.reload();
+          return;
+        }
+        alert(err.response.data.message);
+      }
     }
     
     const fetchCompaniesData = async () => {
-      const response = await api.get('/companies');
-      const companiesFormatted = response.data.map((datum: any) => {
-        return {
-          'id': datum.id,
-          'label': datum.name
+      try {
+        const response = await api.get('/companies', {
+          headers: {
+            Authorization: `Bearer ${token}` 
+          }
+        });
+        const companiesFormatted = response.data.map((datum: any) => {
+          return {
+            'id': datum.id,
+            'label': datum.name
+          }
+        });
+        setCompanies(companiesFormatted);
+      } catch (err: any) {
+        const { status } = err.response;
+        
+        if (status === 401) {
+          alert('Sessão expirada');
+          localStorage.removeItem('token');
+          location.reload();
+          return;
         }
-      });
-      setCompanies(companiesFormatted);
+        alert(err.response.data.message);
+      }
     }
   
     fetchResponsibleData()
@@ -58,10 +92,22 @@ export function Responsible() {
     const iwant = confirm(`Realmente deseja deletar o responsável ${responsibleToRemove?.name}?`);
 
     if (iwant) {
-      const response = await api.delete(`/responsibles/${id}`);
+      try {
+        const response = await api.delete(`/responsibles/${id}`);
       
-      if (response.status === 204) {
-        alert(`${responsibleToRemove?.name} deletada com sucesso!`)
+        if (response.status === 204) {
+          alert(`${responsibleToRemove?.name} deletada com sucesso!`)
+        }
+      } catch (err: any) {
+        const { status } = err.response;
+        
+        if (status === 401) {
+          alert('Sessão expirada');
+          localStorage.removeItem('token');
+          location.reload();
+          return;
+        }
+        alert(err.response.data.message);
       }
     }
   }
@@ -101,10 +147,20 @@ export function Responsible() {
           onChange={(event, value) => { 
             if (!value) {
               const fetchResponsibleData = async () => {
-                const response = await api.get('/responsibles');
-                setResponsible(response.data);
-          
-                console.log(response.data);
+                try {
+                  const response = await api.get('/responsibles');
+                  setResponsible(response.data);
+                } catch (err: any) {
+                  const { status } = err.response;
+                  
+                  if (status === 401) {
+                    alert('Sessão expirada');
+                    localStorage.removeItem('token');
+                    location.reload();
+                    return;
+                  }
+                  alert(err.response.data.message);
+                }
               }
 
               fetchResponsibleData();

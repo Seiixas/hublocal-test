@@ -21,21 +21,6 @@ import {
 
 import { useState } from "react";
 
-import { Bar } from 'react-chartjs-2';
-
-const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
-
-const data: any = {
-  labels,
-  datasets: [
-    {
-      label: 'Dataset 1',
-      data: [0],
-      backgroundColor: 'rgba(255, 99, 132, 0.5)',
-    }
-  ],
-};
-
 export function Dashboard() {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);

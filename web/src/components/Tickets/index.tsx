@@ -18,25 +18,60 @@ interface IPlace {
 }
 
 export function Tickets() {
+  const token = localStorage.getItem('token');
 
   const [places, setPlaces] = useState<IPlace[]>([]);
   const [tickets, setTickets] = useState<ITicket[]>([]);
 
   useEffect(() => {
     const fetchPlacesData = async () => {
-      const response = await api.get('/tickets');
-      setTickets(response.data);
+      try {
+        const response = await api.get('/tickets', {
+          headers: {
+            Authorization: `Bearer ${token}` 
+          }
+        });
+        setTickets(response.data);
+      } catch (err: any) {
+        const { status } = err.response;
+                  
+        if (status === 401) {
+          alert('Sessão expirada');
+          localStorage.removeItem('token');
+          location.reload();
+          return;
+        }
+        
+        alert(err.response.data.message);
+      }
     }
 
     const fetchCompaniesData = async () => {
-      const response = await api.get('/places');
-      const companiesFormatted = response.data.map((datum: any) => {
-        return {
-          'id': datum.id,
-          'label': datum.name
+      try {
+        const response = await api.get('/places', {
+          headers: {
+            Authorization: `Bearer ${token}` 
+          }
+        });
+        const companiesFormatted = response.data.map((datum: any) => {
+          return {
+            'id': datum.id,
+            'label': datum.name
+          }
+        });
+        setPlaces(companiesFormatted);
+      } catch (err: any) {
+        const { status } = err.response;
+                  
+        if (status === 401) {
+          alert('Sessão expirada');
+          localStorage.removeItem('token');
+          location.reload();
+          return;
         }
-      });
-      setPlaces(companiesFormatted);
+        
+        alert(err.response.data.message);
+      }
     }
   
     fetchPlacesData()
@@ -67,10 +102,21 @@ export function Tickets() {
           onChange={(event, value) => { 
             if (!value) {
               const fetchResponsibleData = async () => {
-                const response = await api.get('/tickets');
-                setTickets(response.data);
-          
-                console.log(response.data);
+                try {
+                  const response = await api.get('/tickets');
+                  setTickets(response.data);
+                } catch (err: any) {
+                  const { status } = err.response;
+                            
+                  if (status === 401) {
+                    alert('Sessão expirada');
+                    localStorage.removeItem('token');
+                    location.reload();
+                    return;
+                  }
+                  
+                  alert(err.response.data.message);
+                }
               }
 
               fetchResponsibleData();

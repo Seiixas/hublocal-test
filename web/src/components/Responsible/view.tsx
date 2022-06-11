@@ -20,29 +20,45 @@ interface IResponsible {
 }
 
 export function ViewResponsible() {
+  const token = localStorage.getItem('token');
   const params = useParams();
 
   const [responsible, setResponsible] = useState<IResponsible>();
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await api.get(`/responsibles/${params.id}`);
-
-      console.log(response.data);
-
-      setResponsible({
-        name: response.data.name,
-        phone_number: response.data.phone_number,
-        public_place: response.data.public_place,
-        complement: response.data.complement,
-        is_main: response.data.is_main,
-        district: response.data.district,
-        city: response.data.city,
-        state: response.data.state,
-        cep: response.data.cep,
-        number: response.data.number,
-        company_id: response.data.company_id
-      });
+      try {
+        const response = await api.get(`/responsibles/${params.id}`, {
+          headers: {
+            Authorization: `Bearer ${token}` 
+          }
+        });
+  
+        setResponsible({
+          name: response.data.name,
+          phone_number: response.data.phone_number,
+          public_place: response.data.public_place,
+          complement: response.data.complement,
+          is_main: response.data.is_main,
+          district: response.data.district,
+          city: response.data.city,
+          state: response.data.state,
+          cep: response.data.cep,
+          number: response.data.number,
+          company_id: response.data.company_id
+        });
+      } catch (err: any) {
+        const { status } = err.response;
+                  
+        if (status === 401) {
+          alert('Sessão expirada');
+          localStorage.removeItem('token');
+          location.reload();
+          return;
+        }
+        
+        alert(err.response.data.message);
+      }
     }
     fetchData();
   }, []);

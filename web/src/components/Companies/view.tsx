@@ -12,19 +12,38 @@ interface ICompany {
 }
 
 export function ViewCompany() {
+  const token = localStorage.getItem('token');
   const params = useParams();
 
   const [company, setCompany] = useState<ICompany>();
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await api.get(`/companies/${params.id}`);
-
-      setCompany({
-        name: response.data.name,
-        description: response.data.description,
-        CNPJ: response.data.CNPJ
-      });
+      try {
+        const response = await api.get(`/companies/${params.id}`, {
+          headers: {
+            Authorization: `Bearer ${token}` 
+          }
+        });
+  
+        setCompany({
+          name: response.data.name,
+          description: response.data.description,
+          CNPJ: response.data.CNPJ
+        });
+      } catch (err: any) {
+        const { status } = err.response;
+                  
+        if (status === 401) {
+          alert('Sessão expirada');
+          localStorage.removeItem('token');
+          location.reload();
+          return;
+        }
+        
+        alert(err.response.data.message);
+      }
+      
     }
     fetchData();
   }, []);

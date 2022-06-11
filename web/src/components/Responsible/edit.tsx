@@ -119,6 +119,7 @@ const brazilianStates = [
 ];
 
 export function EditResponsible() {
+  const token = localStorage.getItem('token');
   const params = useParams();
 
   const [responsibleName, setResponsibleName] = useState<string | null>('');
@@ -144,12 +145,25 @@ export function EditResponsible() {
         number: responsibleNumber,
         state: responsibleState,
         city: responsibleCity,
+      },{
+        headers: {
+          Authorization: `Bearer ${token}` 
+        }
       });
 
       if (response.status === 204) {
         alert('Responsável editado com sucesso!');
       }
     } catch (err: any) {
+      const { status } = err.response;
+      
+      if (status === 401) {
+        alert('Sessão expirada');
+        localStorage.removeItem('token');
+        location.reload();
+        return;
+      }
+
       alert(err.response.data.message);
     }
     
@@ -174,17 +188,33 @@ export function EditResponsible() {
 
   useEffect(() => {
     const fetchCompaniesData = async () => {
-      const response = await api.get(`/responsibles/${params.id}`);
-
-      setResponsibleName(response.data.name);
-      setPhoneNumber(response.data.phone_number);
-      setResponsibleCep(response.data.cep);
-      setResponsiblePublicPlace(response.data.public_place);
-      setResponsibleComplement(response.data.complement);
-      setResponsibleDistrict(response.data.district);
-      setResponsibleNumber(response.data.number);
-      setResponsibleState(response.data.state);
-      setResponsibleCity(response.data.city);
+      try {
+        const response = await api.get(`/responsibles/${params.id}`,{
+          headers: {
+            Authorization: `Bearer ${token}` 
+          }
+        });
+  
+        setResponsibleName(response.data.name);
+        setPhoneNumber(response.data.phone_number);
+        setResponsibleCep(response.data.cep);
+        setResponsiblePublicPlace(response.data.public_place);
+        setResponsibleComplement(response.data.complement);
+        setResponsibleDistrict(response.data.district);
+        setResponsibleNumber(response.data.number);
+        setResponsibleState(response.data.state);
+        setResponsibleCity(response.data.city);
+      } catch (err: any) {
+        const { status } = err.response;
+        
+        if (status === 401) {
+          alert('Sessão expirada');
+          localStorage.removeItem('token');
+          location.reload();
+          return;
+        }
+        alert(err.response.data.message);
+      }
     }
 
     fetchCompaniesData()

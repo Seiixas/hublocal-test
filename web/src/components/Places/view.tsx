@@ -1,5 +1,5 @@
 import { TextField } from "@material-ui/core"
-import { Apartment, Place } from "@material-ui/icons"
+import { Place } from "@material-ui/icons"
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { api } from "../../lib/api";
@@ -18,15 +18,24 @@ interface IPlace {
 }
 
 export function ViewPlace() {
+  const token = localStorage.getItem('token');
   const params = useParams();
 
   const [place, setPlace] = useState<IPlace>();
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await api.get(`/places/${params.id}`);
+      const response = await api.get(`/places/${params.id}`, {
+        headers: {
+          Authorization: `Bearer ${token}` 
+        }
+      });
 
-      console.log(response.data);
+      if (response.status === 401) {
+        alert('Sessão expirada');
+        localStorage.removeItem('token');
+        return;
+      }
 
       setPlace({
         name: response.data.name,

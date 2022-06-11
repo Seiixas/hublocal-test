@@ -118,6 +118,7 @@ const brazilianStates = [
 ];
 
 export function CreateCompany() {
+  const token = localStorage.getItem('token');
 
   const [name, setName] = useState<string | null>(null);
   const [description, setDescription] = useState<string | null>(null);
@@ -184,6 +185,10 @@ export function CreateCompany() {
         name,
         description,
         CNPJ: cnpj
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}` 
+        }
       });
   
       const { id } = response.data;
@@ -198,6 +203,10 @@ export function CreateCompany() {
         city,
         number,
         company_id: id
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}` 
+        }
       });
   
       await api.post('/responsibles', {
@@ -211,8 +220,21 @@ export function CreateCompany() {
         state: responsibleState,
         city: responsibleCity,
         company_id: id
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}` 
+        }
       });
     } catch (err: any) {
+      const { status } = err.response;
+                
+      if (status === 401) {
+        alert('Sessão expirada');
+        localStorage.removeItem('token');
+        location.reload();
+        return;
+      }
+      
       alert(err.response.data.message);
     }
 

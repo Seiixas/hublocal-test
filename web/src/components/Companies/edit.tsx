@@ -6,6 +6,7 @@ import { api } from '../../lib/api';
 import { CreateCompanyContainer } from './style';
 
 export function Edit() {
+  const token = localStorage.getItem('token');
   const params = useParams();
 
   const [name, setName] = useState<string>('');
@@ -18,19 +19,49 @@ export function Edit() {
       const response = await api.put(`/companies/${params.id}`, {
         name,
         description
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}` 
+        }
       });
       console.log(response);
     } catch (err: any) {
+      const { status } = err.response;
+                
+      if (status === 401) {
+        alert('Sessão expirada');
+        localStorage.removeItem('token');
+        location.reload();
+        return;
+      }
+      
       alert(err.response.data.message);
     }
   }
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await api.get(`/companies/${params.id}`);
-      setName(response.data.name);
-      setDescription(response.data.description);
-      setCnpj(response.data.CNPJ);
+      try {
+        const response = await api.get(`/companies/${params.id}`, {
+          headers: {
+            Authorization: `Bearer ${token}` 
+          }
+        });
+        setName(response.data.name);
+        setDescription(response.data.description);
+        setCnpj(response.data.CNPJ);
+      } catch (err: any) {
+        const { status } = err.response;
+                  
+        if (status === 401) {
+          alert('Sessão expirada');
+          localStorage.removeItem('token');
+          location.reload();
+          return;
+        }
+        
+        alert(err.response.data.message);
+      }
     }
 
     fetchData()

@@ -33,6 +33,7 @@ interface IPlace {
 }
 
 export function ViewTicket() {
+  const token = localStorage.getItem('token');
   const params = useParams();
 
   const [ticket, setTicket] = useState<ITicket>();
@@ -42,47 +43,99 @@ export function ViewTicket() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await api.get(`/tickets/${params.id}`);
-
-      setTicket({
-        title: response.data.title,
-        name: response.data.name,
-        status: response.data.status,
-        public_place: response.data.public_place,
-        complement: response.data.complement,
-        district: response.data.district,
-        city: response.data.city,
-        state: response.data.state,
-        cep: response.data.cep,
-        number: response.data.number,
-        place_id: response.data.placeId
-      });
-
-      setPlaceId(response.data.placeId);
+      try {
+        const response = await api.get(`/tickets/${params.id}`, {
+          headers: {
+            Authorization: `Bearer ${token}` 
+          }
+        });
+  
+        setTicket({
+          title: response.data.title,
+          name: response.data.name,
+          status: response.data.status,
+          public_place: response.data.public_place,
+          complement: response.data.complement,
+          district: response.data.district,
+          city: response.data.city,
+          state: response.data.state,
+          cep: response.data.cep,
+          number: response.data.number,
+          place_id: response.data.placeId
+        });
+  
+        setPlaceId(response.data.placeId);
+      } catch (err: any) {
+        const { status } = err.response;
+                  
+        if (status === 401) {
+          alert('Sessão expirada');
+          localStorage.removeItem('token');
+          location.reload();
+          return;
+        }
+        
+        alert(err.response.data.message);
+      }
+      
     }
 
     const fetchPlaceData = async () => {
-      const response = await api.get(`/places/${placeId}`);
-
-      setPlace({
-        id: response.data[0].id,
-        name: response.data[0].name,
-        public_place: response.data[0].public_place,
-        complement: response.data[0].complement,
-        district: response.data[0].district,
-        city: response.data[0].city,
-        state: response.data[0].state,
-        cep: response.data[0].cep,
-        number: response.data[0].number,
-        company_id: response.data[0].companyId
-      });
+      try {
+        const response = await api.get(`/places/${placeId}`, {
+          headers: {
+            Authorization: `Bearer ${token}` 
+          }
+        });
+  
+        setPlace({
+          id: response.data[0].id,
+          name: response.data[0].name,
+          public_place: response.data[0].public_place,
+          complement: response.data[0].complement,
+          district: response.data[0].district,
+          city: response.data[0].city,
+          state: response.data[0].state,
+          cep: response.data[0].cep,
+          number: response.data[0].number,
+          company_id: response.data[0].companyId
+        });
+      } catch (err: any) {
+        const { status } = err.response;
+                  
+        if (status === 401) {
+          alert('Sessão expirada');
+          localStorage.removeItem('token');
+          location.reload();
+          return;
+        }
+        
+        alert(err.response.data.message);
+      }
     }
 
     const changeStatus = async () => {
       if (ticket?.status === 'PENDENTE') {
-        await api.patch(`/tickets/${params.id}`, {
-          status: 'PROGRESSO'
-        })
+        try {
+          await api.patch(`/tickets/${params.id}`, {
+            status: 'PROGRESSO'
+          }, {
+            headers: {
+              Authorization: `Bearer ${token}` 
+            }
+          })
+        } catch (err: any) {
+          const { status } = err.response;
+                    
+          if (status === 401) {
+            alert('Sessão expirada');
+            localStorage.removeItem('token');
+            location.reload();
+            return;
+          }
+          
+          alert(err.response.data.message);
+        }
       }
     }
 
@@ -96,8 +149,21 @@ export function ViewTicket() {
     try {
       await api.patch(`/tickets/${params.id}`, {
         status: 'CONCLUÍDO'
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}` 
+        }
       });
     } catch (err: any) {
+      const { status } = err.response;
+                
+      if (status === 401) {
+        alert('Sessão expirada');
+        localStorage.removeItem('token');
+        location.reload();
+        return;
+      }
+      
       alert(err.response.data.message);
     }
   }
@@ -115,6 +181,10 @@ export function ViewTicket() {
         state: ticket?.state,
         city: ticket?.city,
         company_id: place?.company_id
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}` 
+        }
       });
 
       if (response.status === 201) {
@@ -126,6 +196,15 @@ export function ViewTicket() {
       })
       
     } catch (err: any) {
+      const { status } = err.response;
+                
+      if (status === 401) {
+        alert('Sessão expirada');
+        localStorage.removeItem('token');
+        location.reload();
+        return;
+      }
+      
       alert(err.response.data.message);
     }}
 

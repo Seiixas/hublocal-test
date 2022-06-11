@@ -123,6 +123,8 @@ interface ICompany {
 }
 
 export function CreateResponsible() {
+  const token = localStorage.getItem('token');
+  
   const [responsibleName, setResponsibleName] = useState<string | null>(null);
   const [phoneNumber, setPhoneNumber] = useState<string | null>(null);
   const [responsibleCep, setResponsibleCep] = useState<string | null>(null);
@@ -167,12 +169,24 @@ export function CreateResponsible() {
         state: responsibleState,
         city: responsibleCity,
         company_id: companyId
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}` 
+        }
       });
 
       if (response.status === 201) {
         alert('Responsável criado');
       }
     } catch (err: any) {
+      const { status } = err.response;
+      
+      if (status === 401) {
+        alert('Sessão expirada');
+        localStorage.removeItem('token');
+        location.reload();
+        return;
+      }
       alert(err.response.data.message);
     }
     
@@ -180,14 +194,31 @@ export function CreateResponsible() {
 
   useEffect(() => {
     const fetchCompaniesData = async () => {
-      const response = await api.get('/companies');
-      const companiesFormatted = response.data.map((datum: any) => {
-        return {
-          'id': datum.id,
-          'label': datum.name
+      try {
+        const response = await api.get('/companies', {
+          headers: {
+            Authorization: `Bearer ${token}` 
+          }
+        });
+        const companiesFormatted = response.data.map((datum: any) => {
+          return {
+            'id': datum.id,
+            'label': datum.name
+          }
+        });
+        setCompanies(companiesFormatted);
+      } catch (err: any) {
+        const { status } = err.response;
+      
+        if (status === 401) {
+          alert('Sessão expirada');
+          localStorage.removeItem('token');
+          location.reload();
+          return;
         }
-      });
-      setCompanies(companiesFormatted);
+
+        alert(err.response.data.message);
+      }
     }
 
     fetchCompaniesData()

@@ -42,18 +42,20 @@ export function Signup() {
           placeholder="Ex: Maria José da Silva"
           type="text"
           label="Nome completo"
+          required
           onChange={(event) => setNameAuthentication(event.target.value)} />
 
         <TextField 
           placeholder="Ex: maria@jose.com"
           label="E-mail"
           type="email"
+          required
           onChange={(event) => setEmailAuthentication(event.target.value)} />
 
         <TextField 
           type="password"
           label="Senha"
-          helperText="Necessário 5 caracteres"
+          required
           onChange={(event) => setPasswordAuthentication(event.target.value)} />
         <Button type="submit">Cadastrar</Button>
       </form>

@@ -119,6 +119,7 @@ const brazilianStates = [
 ];
 
 export function EditPlace() {
+  const token = localStorage.getItem('token');
   const params = useParams();
 
   const [oldPlaceName, setOldPlaceName] = useState<string>('');
@@ -167,29 +168,61 @@ export function EditPlace() {
         data_updated: dataUpdated,
         created_by: '926be774-646f-428d-b8ed-cc165b6e2689',
         updated_by: '926be774-646f-428d-b8ed-cc165b6e2689'
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}` 
+        }
       });
 
       if (response.status === 201) {
         alert('Ticket criado! Aguarde atualização.');
       }
     } catch (err: any) {
+      const { status } = err.response;
+        
+      if (status === 401) {
+        alert('Sessão expirada');
+        localStorage.removeItem('token');
+        location.reload();
+        return;
+      }
+
       alert(err.response.data.message);
     }
   }
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await api.get(`/places/${params.id}`);
-      setPlaceName(response.data.name);
-      setPublicPlace(response.data.public_place);
-      setComplement(response.data.complement);
-      setDistrict(response.data.district);
-      setCity(response.data.city);
-      setState(response.data.state);
-      setNumber(response.data.number);
-      setCep(response.data.cep);
+      try {
+        const response = await api.get(`/places/${params.id}`, {
+          headers: {
+            Authorization: `Bearer ${token}` 
+          }
+        });
+  
+        setPlaceName(response.data.name);
+        setPublicPlace(response.data.public_place);
+        setComplement(response.data.complement);
+        setDistrict(response.data.district);
+        setCity(response.data.city);
+        setState(response.data.state);
+        setNumber(response.data.number);
+        setCep(response.data.cep);
+  
+        setOldPlaceName(response.data.name);
+      } catch (err: any) {
+        const { status } = err.response;
+        
+        if (status === 401) {
+          alert('Sessão expirada');
+          localStorage.removeItem('token');
+          location.reload();
+          return;
+        }
 
-      setOldPlaceName(response.data.name);
+        alert(err.response.data.message);
+      }
+      
     }
 
     fetchData()

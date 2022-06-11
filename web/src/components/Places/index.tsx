@@ -7,11 +7,6 @@ import { api } from "../../lib/api";
 import { handleChangePage } from "../../utils/chagePage";
 import { Container } from "./style";
 
-const options = [
-  { label: 'The Godfather', id: 1 },
-  { label: 'Pulp Fiction', id: 2 },
-];
-
 interface IPlace {
   id: string;
   name: string;
@@ -32,24 +27,61 @@ interface ICompany {
 
 export function Places() {
 
+  const token = localStorage.getItem('token');
+
   const [companies, setCompanies] = useState<ICompany[]>([]);
   const [places, setPlaces] = useState<IPlace[]>([]);
 
   useEffect(() => {
     const fetchPlacesData = async () => {
-      const response = await api.get('/places');
-      setPlaces(response.data);
+      try {
+        const response = await api.get('/places', {
+          headers: {
+            Authorization: `Bearer ${token}` 
+          }
+        });
+        setPlaces(response.data);
+      } catch (err: any) {
+        const { status } = err.response;
+        
+        if (status === 401) {
+          alert('Sessão expirada');
+          localStorage.removeItem('token');
+          location.reload();
+          return;
+        }
+
+        alert(err.response.data.message);
+      }
     }
 
     const fetchCompaniesData = async () => {
-      const response = await api.get('/companies');
-      const companiesFormatted = response.data.map((datum: any) => {
-        return {
-          'id': datum.id,
-          'label': datum.name
+      try {
+        const response = await api.get('/companies', {
+          headers: {
+            Authorization: `Bearer ${token}` 
+          }
+        });
+
+        const companiesFormatted = response.data.map((datum: any) => {
+          return {
+            'id': datum.id,
+            'label': datum.name
+          }
+        });
+        setCompanies(companiesFormatted);
+      } catch (err: any) {
+        const { status } = err.response;
+        
+        if (status === 401) {
+          alert('Sessão expirada');
+          localStorage.removeItem('token');
+          location.reload();
+          return;
         }
-      });
-      setCompanies(companiesFormatted);
+
+        alert(err.response.data.message);
+      }
     }
   
     fetchPlacesData()
@@ -74,10 +106,29 @@ export function Places() {
     const iwant = confirm(`Realmente deseja deletar o local ${placeToRemove?.name}?`);
 
     if (iwant) {
-      const response = await api.delete(`/places/${id}`);
+      try {
+        const response = await api.delete(`/places/${id}`);
       
-      if (response.status === 204) {
-        alert(`${placeToRemove?.name} deletada com sucesso!`)
+        if (response.status === 401) {
+          alert('Sessão expirada');
+          localStorage.removeItem('token');
+          return;
+        }
+        
+        if (response.status === 204) {
+          alert(`${placeToRemove?.name} deletada com sucesso!`)
+        }
+      } catch (err: any) {
+        const { status } = err.response;
+        
+        if (status === 401) {
+          alert('Sessão expirada');
+          localStorage.removeItem('token');
+          location.reload();
+          return;
+        }
+
+        alert(err.response.data.message);
       }
     }
   }
@@ -103,14 +154,27 @@ export function Places() {
           id="combo-box-demo"
           onChange={(event, value) => { 
             if (!value) {
-              const fetchResponsibleData = async () => {
-                const response = await api.get('/places');
-                setPlaces(response.data);
-          
-                console.log(response.data);
-              }
+              try {
+                const fetchResponsibleData = async () => {
+                  const response = await api.get('/places');
+                  setPlaces(response.data);
+            
+                  console.log(response.data);
+                }
+  
+                fetchResponsibleData();
+              } catch (err: any) {
+                const { status } = err.response;
+        
+                if (status === 401) {
+                  alert('Sessão expirada');
+                  localStorage.removeItem('token');
+                  location.reload();
+                  return;
+                }
 
-              fetchResponsibleData();
+                alert(err.response.data.message);
+              }
             } else {
               handleSearch(value.id)
             }

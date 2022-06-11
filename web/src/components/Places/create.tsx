@@ -123,6 +123,7 @@ interface ICompany {
 }
 
 export function CreatePlace() {
+  const token = localStorage.getItem('token');
 
   const [companies, setCompanies] = useState<ICompany[]>([]);
   const [companyId, setCompanyId] = useState<string>('');
@@ -149,20 +150,38 @@ export function CreatePlace() {
         setDistrict(response.data.bairro);
         setCity(response.data.localidade);
         setState(response.data.uf);
-      }    
+      }
     }
   }
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await api.get('/companies');
-      const companiesFormatted = response.data.map((datum: any) => {
-        return {
-          'id': datum.id,
-          'label': datum.name
+      try {
+        const response = await api.get('/companies', {
+          headers: {
+            Authorization: `Bearer ${token}` 
+          }
+        });
+
+        const companiesFormatted = response.data.map((datum: any) => {
+          return {
+            'id': datum.id,
+            'label': datum.name
+          }
+        });
+        setCompanies(companiesFormatted);
+      } catch (err: any) {
+        const { status } = err.response;
+        
+        if (status === 401) {
+          alert('Sessão expirada');
+          localStorage.removeItem('token');
+          location.reload();
+          return;
         }
-      });
-      setCompanies(companiesFormatted);
+
+        alert(err.response.data.message);
+      }
     }
 
     fetchData()
@@ -187,12 +206,25 @@ export function CreatePlace() {
         state: state,
         city: city,
         company_id: companyId
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}` 
+        },
       });
 
       if (response.status === 201) {
         alert('Local criado');
       }
     } catch (err: any) {
+      const { status } = err.response;
+      
+      if (status === 401) {
+        alert('Sessão expirada');
+        localStorage.removeItem('token');
+        location.reload();
+        return;
+      }
+      
       alert(err.response.data.message);
     }
   }

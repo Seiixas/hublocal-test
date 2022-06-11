@@ -15,19 +15,35 @@ interface ICompany {
 }
 
 export function Companies() {
+  const token = localStorage.getItem('token');
+
   const [companies, setCompanies] = useState<ICompany[]>([]); 
   const [search, setSearch] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await api.get('/companies');
-      setCompanies(response.data);
-      console.log(companies);
+      try {
+        const response = await api.get('/companies', {
+          headers: {
+            Authorization: `Bearer ${token}` 
+          }
+        });
+        setCompanies(response.data);
+      } catch (err: any) {
+        const { status } = err.response;
+                  
+        if (status === 401) {
+          alert('Sessão expirada');
+          localStorage.removeItem('token');
+          location.reload();
+          return;
+        }
+        
+        alert(err.response.data.message);
+      }
     }
   
-    // call the function
     fetchData()
-      // make sure to catch any error
       .catch(console.error);
   }, []);
 
@@ -36,11 +52,25 @@ export function Companies() {
     const iwant = confirm(`Realmente deseja deletar a empresa ${company?.name}?`);
 
     if (iwant) {
-      const response = await api.delete(`/companies/${id}`);
+      try {
+        const response = await api.delete(`/companies/${id}`);
       
-      if (response.status === 204) {
-        alert(`${company?.name} deletada com sucesso!`)
+        if (response.status === 204) {
+          alert(`${company?.name} deletada com sucesso!`)
+        }
+      } catch (err: any) {
+        const { status } = err.response;
+                  
+        if (status === 401) {
+          alert('Sessão expirada');
+          localStorage.removeItem('token');
+          location.reload();
+          return;
+        }
+        
+        alert(err.response.data.message);
       }
+      
     }
   }
 

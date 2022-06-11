@@ -13,11 +13,21 @@ export function Singin() {
   async function handleAuthentication(event: FormEvent) {
     event.preventDefault();
 
+
+    console.log({
+      email: emailAuthentication,
+      password: passwordAuthentication
+    });
+
     try {
       const response = await api.post('/users/auth', {
         email: emailAuthentication,
         password: passwordAuthentication
       });
+
+      const { auth } = response.data;
+
+      localStorage.setItem('token', auth);
     } catch (err: any) {
       const { message } = err.response.data;
       alert(message);
@@ -31,11 +41,13 @@ export function Singin() {
         <TextField
           label="E-mail"
           type="email"
+          required
           onChange={(event) => setEmailAuthentication(event.target.value)} />
 
         <TextField 
           type="password"
           label="Senha"
+          required
           onChange={(event) => setPasswordAuthentication(event.target.value)} />
         <Button type="submit">Entrar</Button>
         <span>Não é cadastrado? Crie sua conta <Link to='/signup'>aqui</Link>.</span>
