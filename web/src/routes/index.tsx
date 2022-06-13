@@ -23,6 +23,10 @@ export function Paths() {
     return isAuthenticated ? children : <Navigate to={redirectTo}/>
   }
 
+  const PrivateRouterSignIn = ({ children, redirectTo }: any) => {
+    const isAuthenticated = localStorage.getItem('token') !== null;
+    return isAuthenticated ? <Navigate to={redirectTo} /> : children;
+  }
 
   return (
     <BrowserRouter>
@@ -61,8 +65,10 @@ export function Paths() {
         </Route>
 
         <Route path="/dashboard" element={<PrivateRouter redirectTo="/signin"><Dashboard /></PrivateRouter>} />
-        <Route path="/signin" element={<Singin />} />
-        <Route path="/signup" element={<Signup />} />
+        <Route path="/signin" element={<PrivateRouterSignIn redirectTo="/dashboard"><Singin /></PrivateRouterSignIn>} />
+        <Route path="/signup" element={<PrivateRouterSignIn redirectTo="/dashboard"><Signup /></PrivateRouterSignIn>} />
+      
+        <Route path="*" element={<Navigate to="/dashboard" />} />
       </Routes>
     </BrowserRouter>
   );
