@@ -20,16 +20,10 @@ import {
 } from "@material-ui/icons";
 
 import { useState } from "react";
+import { Navigate } from "react-router-dom";
+import { handleChangePage } from "../../utils/chagePage";
 
 export function Dashboard() {
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
 
   return (
     <>
@@ -46,21 +40,17 @@ export function Dashboard() {
               <Button
               id="demo-positioned-button"
               color="inherit"
-              aria-controls={open ? 'demo-positioned-menu' : undefined}
               aria-haspopup="true"
-              aria-expanded={open ? 'true' : undefined}
-              onClick={handleClick}
+              onClick={() => handleChangePage('/companies')}
               >
                 <Apartment />
                 Empresas
               </Button>
               <Button
               id="demo-positioned-button"
-              aria-controls={open ? 'demo-positioned-menu' : undefined}
               aria-haspopup="true"
               color="inherit"
-              aria-expanded={open ? 'true' : undefined}
-              onClick={handleClick}
+              onClick={() => handleChangePage('/responsible')}
               >
                 <Person />
                 Resonsáveis
@@ -68,10 +58,8 @@ export function Dashboard() {
               <Button
               color="inherit"
               id="demo-positioned-button"
-              aria-controls={open ? 'demo-positioned-menu' : undefined}
               aria-haspopup="true"
-              aria-expanded={open ? 'true' : undefined}
-              onClick={handleClick}
+              onClick={() => handleChangePage('/places')}
               >
                 <Place />
                 Locais
@@ -80,16 +68,19 @@ export function Dashboard() {
               <Button
               id="demo-positioned-button"
               color="inherit"
-              aria-controls={open ? 'demo-positioned-menu' : undefined}
               aria-haspopup="true"
-              aria-expanded={open ? 'true' : undefined}
-              onClick={handleClick}
+              onClick={() => handleChangePage('/tickets')}
               >
                 <ConfirmationNumber />
                 Tickets
               </Button>
             </div>
-            <Button color="inherit">
+            <Button
+              color="inherit"
+              onClick={() => {
+                localStorage.removeItem('token');
+                location.reload();
+              }}>
               <PowerSettingsNew />
               Sair
             </Button>
