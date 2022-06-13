@@ -1,10 +1,11 @@
-import { Box, MenuItem, Tab, Tabs } from '@material-ui/core';
+import { MenuItem } from '@material-ui/core';
 import { Apartment } from '@material-ui/icons';
 import { Button, TextField } from '@mui/material';
 import axios from 'axios';
 import { FormEvent, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { api } from '../../lib/api';
+import { Message } from '../Message';
 import { CreateCompanyContainer } from './style';
 
 const brazilianStates = [
@@ -122,6 +123,10 @@ export function EditResponsible() {
   const token = localStorage.getItem('token');
   const params = useParams();
 
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertSeverity, setAlertSeverity] = useState<'success' | 'error' | 'warning'>('success');
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
+
   const [responsibleName, setResponsibleName] = useState<string | null>('');
   const [phoneNumber, setPhoneNumber] = useState<string | null>('');
   const [responsibleCep, setResponsibleCep] = useState<string | null>('');
@@ -152,19 +157,28 @@ export function EditResponsible() {
       });
 
       if (response.status === 204) {
-        alert('Responsável editado com sucesso!');
+        setAlertSeverity('success');
+        setAlertMessage('Responsável atualizado com sucesso!');
+        setIsAlertOpen(true);
       }
     } catch (err: any) {
       const { status } = err.response;
-      
+                  
       if (status === 401) {
-        alert('Sessão expirada');
+        setAlertSeverity('error');
+        setAlertMessage('Sessão expirada');
+        setIsAlertOpen(true);
         localStorage.removeItem('token');
-        location.reload();
+        setTimeout(() => {
+          location.reload();
+        }, 5000);
         return;
       }
 
-      alert(err.response.data.message);
+      const { message } = err.response.data;
+      setAlertSeverity('error');
+      setAlertMessage(message);
+      setIsAlertOpen(true);
     }
     
   }
@@ -206,14 +220,22 @@ export function EditResponsible() {
         setResponsibleCity(response.data.city);
       } catch (err: any) {
         const { status } = err.response;
-        
+                  
         if (status === 401) {
-          alert('Sessão expirada');
+          setAlertSeverity('error');
+          setAlertMessage('Sessão expirada');
+          setIsAlertOpen(true);
           localStorage.removeItem('token');
-          location.reload();
+          setTimeout(() => {
+            location.reload();
+          }, 5000);
           return;
         }
-        alert(err.response.data.message);
+
+        const { message } = err.response.data;
+        setAlertSeverity('error');
+        setAlertMessage(message);
+        setIsAlertOpen(true);
       }
     }
 
@@ -223,7 +245,11 @@ export function EditResponsible() {
 
   return (
     <>
-    
+    <Message
+        visibility={isAlertOpen}
+        type={alertSeverity}>
+          {alertMessage}
+      </Message>
     <CreateCompanyContainer>
       <header>
         <Apartment fontSize="large"/>

@@ -3,6 +3,7 @@ import { Place } from "@material-ui/icons"
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { api } from "../../lib/api";
+import { Message } from "../Message";
 import { CreateCompanyContainer } from './style';
 
 interface IPlace {
@@ -21,39 +22,62 @@ export function ViewPlace() {
   const token = localStorage.getItem('token');
   const params = useParams();
 
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertSeverity, setAlertSeverity] = useState<'success' | 'error' | 'warning'>('success');
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
+
   const [place, setPlace] = useState<IPlace>();
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await api.get(`/places/${params.id}`, {
-        headers: {
-          Authorization: `Bearer ${token}` 
+      try {
+        const response = await api.get(`/places/${params.id}`, {
+          headers: {
+            Authorization: `Bearer ${token}` 
+          }
+        });
+  
+        setPlace({
+          name: response.data.name,
+          public_place: response.data.public_place,
+          complement: response.data.complement,
+          district: response.data.district,
+          city: response.data.city,
+          state: response.data.state,
+          cep: response.data.cep,
+          number: response.data.number,
+          company_id: response.data.company_id
+        });
+      } catch (err: any) {
+        const { status } = err.response;
+                  
+        if (status === 401) {
+          setAlertSeverity('error');
+          setAlertMessage('Sessão expirada');
+          setIsAlertOpen(true);
+          localStorage.removeItem('token');
+          setTimeout(() => {
+            location.reload();
+          }, 5000);
+          return;
         }
-      });
 
-      if (response.status === 401) {
-        alert('Sessão expirada');
-        localStorage.removeItem('token');
-        return;
+        const { message } = err.response.data;
+        setAlertSeverity('error');
+        setAlertMessage(message);
+        setIsAlertOpen(true);
       }
-
-      setPlace({
-        name: response.data.name,
-        public_place: response.data.public_place,
-        complement: response.data.complement,
-        district: response.data.district,
-        city: response.data.city,
-        state: response.data.state,
-        cep: response.data.cep,
-        number: response.data.number,
-        company_id: response.data.company_id
-      });
     }
     fetchData();
   }, []);
 
   return (
     <>
+    <Message 
+        visibility={isAlertOpen}
+        type={alertSeverity}>
+          {alertMessage}
+      </Message>
     <CreateCompanyContainer>
       <header>
         <Place fontSize="large"/>

@@ -1,9 +1,10 @@
-import { Box, MenuItem, Tab, Tabs } from '@material-ui/core';
+import { MenuItem } from '@material-ui/core';
 import { Apartment } from '@material-ui/icons';
 import { Autocomplete, Button, TextField } from '@mui/material';
 import axios from 'axios';
 import { FormEvent, useEffect, useState } from 'react';
 import { api } from '../../lib/api';
+import { Message } from '../Message';
 import { CreateCompanyContainer } from './style';
 
 const brazilianStates = [
@@ -125,6 +126,10 @@ interface ICompany {
 export function CreateResponsible() {
   const token = localStorage.getItem('token');
   
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertSeverity, setAlertSeverity] = useState<'success' | 'error' | 'warning'>('success');
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
+  
   const [responsibleName, setResponsibleName] = useState<string | null>(null);
   const [phoneNumber, setPhoneNumber] = useState<string | null>(null);
   const [responsibleCep, setResponsibleCep] = useState<string | null>(null);
@@ -176,18 +181,28 @@ export function CreateResponsible() {
       });
 
       if (response.status === 201) {
-        alert('Responsável criado');
+        setAlertSeverity('success');
+        setAlertMessage('Responsável criado!');
+        setIsAlertOpen(true);
       }
     } catch (err: any) {
       const { status } = err.response;
-      
+                  
       if (status === 401) {
-        alert('Sessão expirada');
+        setAlertSeverity('error');
+        setAlertMessage('Sessão expirada');
+        setIsAlertOpen(true);
         localStorage.removeItem('token');
-        location.reload();
+        setTimeout(() => {
+          location.reload();
+        }, 5000);
         return;
       }
-      alert(err.response.data.message);
+
+      const { message } = err.response.data;
+      setAlertSeverity('error');
+      setAlertMessage(message);
+      setIsAlertOpen(true);
     }
     
   }
@@ -209,15 +224,22 @@ export function CreateResponsible() {
         setCompanies(companiesFormatted);
       } catch (err: any) {
         const { status } = err.response;
-      
+                  
         if (status === 401) {
-          alert('Sessão expirada');
+          setAlertSeverity('error');
+          setAlertMessage('Sessão expirada');
+          setIsAlertOpen(true);
           localStorage.removeItem('token');
-          location.reload();
+          setTimeout(() => {
+            location.reload();
+          }, 5000);
           return;
         }
 
-        alert(err.response.data.message);
+        const { message } = err.response.data;
+        setAlertSeverity('error');
+        setAlertMessage(message);
+        setIsAlertOpen(true);
       }
     }
 
@@ -227,7 +249,11 @@ export function CreateResponsible() {
 
   return (
     <>
-    
+    <Message
+        visibility={isAlertOpen}
+        type={alertSeverity}>
+          {alertMessage}
+      </Message>
     <CreateCompanyContainer>
       <header>
         <Apartment fontSize="large"/>
@@ -247,7 +273,7 @@ export function CreateResponsible() {
         />
 
         <TextField 
-          placeholder="Ex: Matriz"
+          placeholder="Ex: João"
           type="text"
           label="Nome"
           required

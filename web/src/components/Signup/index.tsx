@@ -4,12 +4,17 @@ import hublocalGif from '../../assets/signin/hublocal-logo-animated.gif';
 import { Button, TextField } from "@mui/material";
 import { FormEvent, useState } from "react";
 import { api } from "../../lib/api";
+import { Message } from "../Message";
 
 export function Signup() {
   const [nameAuthentication, setNameAuthentication] = useState<string | null>(null);
   const [emailAuthentication, setEmailAuthentication] = useState<string | null>(null);
   const [passwordAuthentication, setPasswordAuthentication] = useState<string | null>(null);
   
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertSeverity, setAlertSeverity] = useState<'success' | 'error' | 'warning'>('success');
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
+
   async function handleSignup(event: FormEvent) {
     event.preventDefault();
 
@@ -21,19 +26,28 @@ export function Signup() {
       });
 
       if (response.status === 201) {
-        alert('Account created successfully');
+        setAlertSeverity('success');
+        setAlertMessage('Conta criada com sucesso!');
+        setIsAlertOpen(true);
         setEmailAuthentication(null);
         setNameAuthentication(null);
         setPasswordAuthentication(null);
       }
     } catch (err: any) {
       const { message } = err.response.data;
-      alert(message);
+      setAlertSeverity('error');
+      setAlertMessage(message);
+      setIsAlertOpen(true);
     }
   }
 
   return (
     <Container>
+      <Message 
+        visibility={isAlertOpen}
+        type={alertSeverity}>
+          {alertMessage}
+      </Message>
       <form onSubmit={handleSignup}>
         <img src={hublocalGif} alt="" />
         <h2>Efetue o seu cadastro</h2>

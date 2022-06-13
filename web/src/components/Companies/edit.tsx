@@ -3,11 +3,16 @@ import { Button, TextField } from '@mui/material';
 import { FormEvent, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { api } from '../../lib/api';
+import { Message } from '../Message';
 import { CreateCompanyContainer } from './style';
 
 export function Edit() {
   const token = localStorage.getItem('token');
   const params = useParams();
+
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertSeverity, setAlertSeverity] = useState<'success' | 'error' | 'warning'>('success');
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
 
   const [name, setName] = useState<string>('');
   const [description, setDescription] = useState<string>('');
@@ -24,18 +29,24 @@ export function Edit() {
           Authorization: `Bearer ${token}` 
         }
       });
-      console.log(response);
     } catch (err: any) {
       const { status } = err.response;
-                
+                  
       if (status === 401) {
-        alert('Sessão expirada');
+        setAlertSeverity('error');
+        setAlertMessage('Sessão expirada');
+        setIsAlertOpen(true);
         localStorage.removeItem('token');
-        location.reload();
+        setTimeout(() => {
+          location.reload();
+        }, 5000);
         return;
       }
-      
-      alert(err.response.data.message);
+
+      const { message } = err.response.data;
+      setAlertSeverity('error');
+      setAlertMessage(message);
+      setIsAlertOpen(true);
     }
   }
 
@@ -54,13 +65,20 @@ export function Edit() {
         const { status } = err.response;
                   
         if (status === 401) {
-          alert('Sessão expirada');
+          setAlertSeverity('error');
+          setAlertMessage('Sessão expirada');
+          setIsAlertOpen(true);
           localStorage.removeItem('token');
-          location.reload();
+          setTimeout(() => {
+            location.reload();
+          }, 5000);
           return;
         }
-        
-        alert(err.response.data.message);
+
+        const { message } = err.response.data;
+        setAlertSeverity('error');
+        setAlertMessage(message);
+        setIsAlertOpen(true);
       }
     }
 
@@ -70,8 +88,12 @@ export function Edit() {
 
   return (
     <>
-    
     <CreateCompanyContainer>
+      <Message
+        visibility={isAlertOpen}
+        type={alertSeverity}>
+          {alertMessage}
+      </Message>
       <header>
         <Apartment fontSize="large"/>
         <h1>Atualização de Empresa</h1>

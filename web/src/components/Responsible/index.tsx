@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../../lib/api";
 import { handleChangePage } from "../../utils/chagePage";
+import { Message } from "../Message";
 import { Container } from "./style";
 
 interface ICompany {
@@ -29,6 +30,10 @@ interface IResponsible {
 export function Responsible() {
   const token = localStorage.getItem('token');
 
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertSeverity, setAlertSeverity] = useState<'success' | 'error' | 'warning'>('success');
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
+
   const [responsible, setResponsible] = useState<IResponsible[]>([]);
   const [companies, setCompanies] = useState<ICompany[]>([]);
 
@@ -43,14 +48,22 @@ export function Responsible() {
         setResponsible(response.data);
       } catch (err: any) {
         const { status } = err.response;
-        
+                  
         if (status === 401) {
-          alert('Sessão expirada');
+          setAlertSeverity('error');
+          setAlertMessage('Sessão expirada');
+          setIsAlertOpen(true);
           localStorage.removeItem('token');
-          location.reload();
+          setTimeout(() => {
+            location.reload();
+          }, 5000);
           return;
         }
-        alert(err.response.data.message);
+
+        const { message } = err.response.data;
+        setAlertSeverity('error');
+        setAlertMessage(message);
+        setIsAlertOpen(true);
       }
     }
     
@@ -70,14 +83,22 @@ export function Responsible() {
         setCompanies(companiesFormatted);
       } catch (err: any) {
         const { status } = err.response;
-        
+                  
         if (status === 401) {
-          alert('Sessão expirada');
+          setAlertSeverity('error');
+          setAlertMessage('Sessão expirada');
+          setIsAlertOpen(true);
           localStorage.removeItem('token');
-          location.reload();
+          setTimeout(() => {
+            location.reload();
+          }, 5000);
           return;
         }
-        alert(err.response.data.message);
+
+        const { message } = err.response.data;
+        setAlertSeverity('error');
+        setAlertMessage(message);
+        setIsAlertOpen(true);
       }
     }
   
@@ -93,21 +114,35 @@ export function Responsible() {
 
     if (iwant) {
       try {
-        const response = await api.delete(`/responsibles/${id}`);
+        const response = await api.delete(`/responsibles/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}` 
+          }
+        });
       
         if (response.status === 204) {
-          alert(`${responsibleToRemove?.name} deletada com sucesso!`)
+          setAlertSeverity('success');
+          setAlertMessage(`${responsibleToRemove?.name} deletada com sucesso!`);
+          setIsAlertOpen(true);
         }
       } catch (err: any) {
         const { status } = err.response;
-        
+                  
         if (status === 401) {
-          alert('Sessão expirada');
+          setAlertSeverity('error');
+          setAlertMessage('Sessão expirada');
+          setIsAlertOpen(true);
           localStorage.removeItem('token');
-          location.reload();
+          setTimeout(() => {
+            location.reload();
+          }, 5000);
           return;
         }
-        alert(err.response.data.message);
+
+        const { message } = err.response.data;
+        setAlertSeverity('error');
+        setAlertMessage(message);
+        setIsAlertOpen(true);
       }
     }
   }
@@ -115,10 +150,10 @@ export function Responsible() {
   function handleSearch(id: string) {
     const responsibles = responsible.filter((responsible) => responsible.companyId === id);
 
-    console.log(responsibles);
-
     if (!responsibles) {
-      alert('Companhia sem responsáveis');
+      setAlertSeverity('warning');
+      setAlertMessage('Nenhum responsável encontrado');
+      setIsAlertOpen(true);
       return;
     }
 
@@ -127,6 +162,11 @@ export function Responsible() {
 
   return (
     <Container>
+      <Message 
+        visibility={isAlertOpen}
+        type={alertSeverity}>
+          {alertMessage}
+      </Message>
       <SpeedDial
         ariaLabel="SpeedDial basic example"
         sx={{ position: 'absolute', bottom: 16, right: 16 }}
@@ -154,12 +194,20 @@ export function Responsible() {
                   const { status } = err.response;
                   
                   if (status === 401) {
-                    alert('Sessão expirada');
+                    setAlertSeverity('error');
+                    setAlertMessage('Sessão expirada');
+                    setIsAlertOpen(true);
                     localStorage.removeItem('token');
-                    location.reload();
+                    setTimeout(() => {
+                      location.reload();
+                    }, 5000);
                     return;
                   }
-                  alert(err.response.data.message);
+
+                  const { message } = err.response.data;
+                  setAlertSeverity('error');
+                  setAlertMessage(message);
+                  setIsAlertOpen(true);
                 }
               }
 

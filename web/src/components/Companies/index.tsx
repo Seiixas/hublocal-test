@@ -1,10 +1,11 @@
-import { Box, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from "@material-ui/core";
-import { Add, Apartment, Create, Delete, Edit, Search, Visibility } from "@material-ui/icons";
-import { SpeedDial, SpeedDialAction, SpeedDialIcon } from "@mui/material";
+import { Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from "@material-ui/core";
+import { Add, Apartment, Delete, Edit, Search, Visibility } from "@material-ui/icons";
+import { SpeedDial, SpeedDialAction } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../../lib/api";
 import { handleChangePage } from "../../utils/chagePage";
+import { Message } from "../Message";
 import { Container } from "./style";
 
 interface ICompany {
@@ -20,6 +21,10 @@ export function Companies() {
   const [companies, setCompanies] = useState<ICompany[]>([]); 
   const [search, setSearch] = useState('');
 
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertSeverity, setAlertSeverity] = useState<'success' | 'error' | 'warning'>('success');
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -33,13 +38,20 @@ export function Companies() {
         const { status } = err.response;
                   
         if (status === 401) {
-          alert('Sessão expirada');
+          setAlertSeverity('error');
+          setAlertMessage('Sessão expirada');
+          setIsAlertOpen(true);
           localStorage.removeItem('token');
-          location.reload();
+          setTimeout(() => {
+            location.reload();
+          }, 5000);
           return;
         }
-        
-        alert(err.response.data.message);
+
+        const { message } = err.response.data;
+        setAlertSeverity('error');
+        setAlertMessage(message);
+        setIsAlertOpen(true);
       }
     }
   
@@ -53,22 +65,35 @@ export function Companies() {
 
     if (iwant) {
       try {
-        const response = await api.delete(`/companies/${id}`);
+        const response = await api.delete(`/companies/${id}` , {
+          headers: {
+            Authorization: `Bearer ${token}` 
+          }
+        });
       
         if (response.status === 204) {
-          alert(`${company?.name} deletada com sucesso!`)
+          setAlertSeverity('success');
+          setAlertMessage(`${company?.name} deletada com sucesso!`);
+          setIsAlertOpen(true);
         }
       } catch (err: any) {
         const { status } = err.response;
                   
         if (status === 401) {
-          alert('Sessão expirada');
+          setAlertSeverity('error');
+          setAlertMessage('Sessão expirada');
+          setIsAlertOpen(true);
           localStorage.removeItem('token');
-          location.reload();
+          setTimeout(() => {
+            location.reload();
+          }, 5000);
           return;
         }
-        
-        alert(err.response.data.message);
+
+        const { message } = err.response.data;
+        setAlertSeverity('error');
+        setAlertMessage(message);
+        setIsAlertOpen(true);
       }
       
     }
@@ -78,7 +103,9 @@ export function Companies() {
     const company = companies.find((company) => company.CNPJ === search);
 
     if (!company) {
-      alert('Companhia inexistente');
+      setAlertSeverity('warning');
+      setAlertMessage('Companhia inexistente');
+      setIsAlertOpen(true);
       return;
     }
 
@@ -87,6 +114,12 @@ export function Companies() {
 
   return (
     <Container>
+      <Message
+        visibility={isAlertOpen}
+        type={alertSeverity}>
+          {alertMessage}
+      </Message>
+
       <SpeedDial
         ariaLabel="SpeedDial basic example"
         sx={{ position: 'absolute', bottom: 16, right: 16 }}

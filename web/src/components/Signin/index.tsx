@@ -5,20 +5,19 @@ import { Button, TextField } from "@mui/material";
 import { FormEvent, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../../lib/api";
+import { Message } from "../Message";
 
 export function Singin() {
   const [emailAuthentication, setEmailAuthentication] = useState<string | null>(null);
   const [passwordAuthentication, setPasswordAuthentication] = useState<string | null>(null);
 
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertSeverity, setAlertSeverity] = useState<'success' | 'error' | 'warning'>('success');
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
+
   async function handleAuthentication(event: FormEvent) {
     event.preventDefault();
-
-
-    console.log({
-      email: emailAuthentication,
-      password: passwordAuthentication
-    });
-
+    
     try {
       const response = await api.post('/users/auth', {
         email: emailAuthentication,
@@ -30,12 +29,19 @@ export function Singin() {
       localStorage.setItem('token', auth);
     } catch (err: any) {
       const { message } = err.response.data;
-      alert(message);
+      setAlertSeverity('error');
+      setAlertMessage(message);
+      setIsAlertOpen(true);
     }
   }
 
   return (
     <Container>
+      <Message 
+        visibility={isAlertOpen}
+        type={alertSeverity}>
+          {alertMessage}
+      </Message>
       <form onSubmit={handleAuthentication}>
         <img src={hublocalGif} alt="" />
         <TextField

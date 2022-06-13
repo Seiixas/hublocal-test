@@ -1,9 +1,10 @@
-import { Box, MenuItem, Tab, Tabs } from '@material-ui/core';
-import { Apartment, Place } from '@material-ui/icons';
+import { MenuItem } from '@material-ui/core';
+import { Place } from '@material-ui/icons';
 import { Autocomplete, Button, TextField } from '@mui/material';
 import axios from 'axios';
 import { FormEvent, useEffect, useState } from 'react';
 import { api } from '../../lib/api';
+import { Message } from '../Message';
 import { CreateCompanyContainer } from './style';
 
 const brazilianStates = [
@@ -125,6 +126,10 @@ interface ICompany {
 export function CreatePlace() {
   const token = localStorage.getItem('token');
 
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertSeverity, setAlertSeverity] = useState<'success' | 'error' | 'warning'>('success');
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
+
   const [companies, setCompanies] = useState<ICompany[]>([]);
   const [companyId, setCompanyId] = useState<string>('');
 
@@ -174,13 +179,20 @@ export function CreatePlace() {
         const { status } = err.response;
         
         if (status === 401) {
-          alert('Sessão expirada');
+          setAlertSeverity('error');
+          setAlertMessage('Sessão expirada');
+          setIsAlertOpen(true);
           localStorage.removeItem('token');
-          location.reload();
+          setTimeout(() => {
+            location.reload();
+          }, 5000);
           return;
         }
 
-        alert(err.response.data.message);
+        const { message } = err.response.data;
+        setAlertSeverity('error');
+        setAlertMessage(message);
+        setIsAlertOpen(true);
       }
     }
 
@@ -192,7 +204,9 @@ export function CreatePlace() {
     event.preventDefault();
     try {
       if (!companyId) {
-        alert('Selecione alguma empresa');
+        setAlertSeverity('warning');
+        setAlertMessage('Selecione alguma empresa');
+        setIsAlertOpen(true);
         return;
       }
 
@@ -213,25 +227,38 @@ export function CreatePlace() {
       });
 
       if (response.status === 201) {
-        alert('Local criado');
+        setAlertSeverity('success');
+        setAlertMessage('Local criado com sucesso!');
+        setIsAlertOpen(true);
       }
     } catch (err: any) {
       const { status } = err.response;
-      
+                  
       if (status === 401) {
-        alert('Sessão expirada');
+        setAlertSeverity('error');
+        setAlertMessage('Sessão expirada');
+        setIsAlertOpen(true);
         localStorage.removeItem('token');
-        location.reload();
+        setTimeout(() => {
+          location.reload();
+        }, 5000);
         return;
       }
-      
-      alert(err.response.data.message);
+
+      const { message } = err.response.data;
+      setAlertSeverity('error');
+      setAlertMessage(message);
+      setIsAlertOpen(true);
     }
   }
 
   return (
     <>
-    
+      <Message 
+        visibility={isAlertOpen}
+        type={alertSeverity}>
+          {alertMessage}
+      </Message>
       <CreateCompanyContainer>
         <header>
           <Place fontSize="large"/>

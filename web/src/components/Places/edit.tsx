@@ -1,10 +1,11 @@
-import { Box, MenuItem, Tab, Tabs } from '@material-ui/core';
-import { Apartment, Place } from '@material-ui/icons';
+import {  MenuItem } from '@material-ui/core';
+import { Place } from '@material-ui/icons';
 import { Button, TextField } from '@mui/material';
 import axios from 'axios';
 import { FormEvent, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { api } from '../../lib/api';
+import { Message } from '../Message';
 import { CreateCompanyContainer } from './style';
 
 const brazilianStates = [
@@ -122,6 +123,10 @@ export function EditPlace() {
   const token = localStorage.getItem('token');
   const params = useParams();
 
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertSeverity, setAlertSeverity] = useState<'success' | 'error' | 'warning'>('success');
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
+
   const [oldPlaceName, setOldPlaceName] = useState<string>('');
 
   const [placeName, setPlaceName] = useState<string | null>('');
@@ -175,19 +180,28 @@ export function EditPlace() {
       });
 
       if (response.status === 201) {
-        alert('Ticket criado! Aguarde atualização.');
+        setAlertSeverity('success');
+        setAlertMessage('Local atualizado com sucesso!');
+        setIsAlertOpen(true);
       }
     } catch (err: any) {
       const { status } = err.response;
-        
+                  
       if (status === 401) {
-        alert('Sessão expirada');
+        setAlertSeverity('error');
+        setAlertMessage('Sessão expirada');
+        setIsAlertOpen(true);
         localStorage.removeItem('token');
-        location.reload();
+        setTimeout(() => {
+          location.reload();
+        }, 5000);
         return;
       }
 
-      alert(err.response.data.message);
+      const { message } = err.response.data;
+      setAlertSeverity('error');
+      setAlertMessage(message);
+      setIsAlertOpen(true);
     }
   }
 
@@ -212,15 +226,22 @@ export function EditPlace() {
         setOldPlaceName(response.data.name);
       } catch (err: any) {
         const { status } = err.response;
-        
+                  
         if (status === 401) {
-          alert('Sessão expirada');
+          setAlertSeverity('error');
+          setAlertMessage('Sessão expirada');
+          setIsAlertOpen(true);
           localStorage.removeItem('token');
-          location.reload();
+          setTimeout(() => {
+            location.reload();
+          }, 5000);
           return;
         }
 
-        alert(err.response.data.message);
+        const { message } = err.response.data;
+        setAlertSeverity('error');
+        setAlertMessage(message);
+        setIsAlertOpen(true);
       }
       
     }
@@ -232,7 +253,11 @@ export function EditPlace() {
 
   return (
     <>
-    
+      <Message
+        visibility={isAlertOpen}
+        type={alertSeverity}>
+          {alertMessage}
+      </Message>
       <CreateCompanyContainer>
         <header>
           <Place fontSize="large"/>

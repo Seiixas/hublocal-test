@@ -3,6 +3,7 @@ import { Check, Close, Person } from "@material-ui/icons"
 import { FormEvent, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { api } from "../../lib/api";
+import { Message } from "../Message";
 import { CreateCompanyContainer } from './style';
 
 interface ITicket {
@@ -35,6 +36,10 @@ interface IPlace {
 export function ViewTicket() {
   const token = localStorage.getItem('token');
   const params = useParams();
+
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertSeverity, setAlertSeverity] = useState<'success' | 'error' | 'warning'>('success');
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
 
   const [ticket, setTicket] = useState<ITicket>();
   const [place, setPlace] = useState<IPlace>();
@@ -69,13 +74,20 @@ export function ViewTicket() {
         const { status } = err.response;
                   
         if (status === 401) {
-          alert('Sessão expirada');
+          setAlertSeverity('error');
+          setAlertMessage('Sessão expirada');
+          setIsAlertOpen(true);
           localStorage.removeItem('token');
-          location.reload();
+          setTimeout(() => {
+            location.reload();
+          }, 5000);
           return;
         }
-        
-        alert(err.response.data.message);
+
+        const { message } = err.response.data;
+        setAlertSeverity('error');
+        setAlertMessage(message);
+        setIsAlertOpen(true);
       }
       
     }
@@ -104,13 +116,20 @@ export function ViewTicket() {
         const { status } = err.response;
                   
         if (status === 401) {
-          alert('Sessão expirada');
+          setAlertSeverity('error');
+          setAlertMessage('Sessão expirada');
+          setIsAlertOpen(true);
           localStorage.removeItem('token');
-          location.reload();
+          setTimeout(() => {
+            location.reload();
+          }, 5000);
           return;
         }
-        
-        alert(err.response.data.message);
+
+        const { message } = err.response.data;
+        setAlertSeverity('error');
+        setAlertMessage(message);
+        setIsAlertOpen(true);
       }
     }
 
@@ -126,15 +145,22 @@ export function ViewTicket() {
           })
         } catch (err: any) {
           const { status } = err.response;
-                    
+                  
           if (status === 401) {
-            alert('Sessão expirada');
+            setAlertSeverity('error');
+            setAlertMessage('Sessão expirada');
+            setIsAlertOpen(true);
             localStorage.removeItem('token');
-            location.reload();
+            setTimeout(() => {
+              location.reload();
+            }, 5000);
             return;
           }
-          
-          alert(err.response.data.message);
+
+          const { message } = err.response.data;
+          setAlertSeverity('error');
+          setAlertMessage(message);
+          setIsAlertOpen(true);
         }
       }
     }
@@ -156,15 +182,22 @@ export function ViewTicket() {
       });
     } catch (err: any) {
       const { status } = err.response;
-                
+                  
       if (status === 401) {
-        alert('Sessão expirada');
+        setAlertSeverity('error');
+        setAlertMessage('Sessão expirada');
+        setIsAlertOpen(true);
         localStorage.removeItem('token');
-        location.reload();
+        setTimeout(() => {
+          location.reload();
+        }, 5000);
         return;
       }
-      
-      alert(err.response.data.message);
+
+      const { message } = err.response.data;
+      setAlertSeverity('error');
+      setAlertMessage(message);
+      setIsAlertOpen(true);
     }
   }
 
@@ -188,28 +221,42 @@ export function ViewTicket() {
       });
 
       if (response.status === 201) {
-        alert('Local atualizado!');
+        setAlertSeverity('success');
+        setAlertMessage('Local atualizado!');
+        setIsAlertOpen(true);
       }
 
       await api.patch(`/tickets/${params.id}`, {
         status: 'CONCLUÍDO'
-      })
+      });
       
     } catch (err: any) {
       const { status } = err.response;
-                
+                  
       if (status === 401) {
-        alert('Sessão expirada');
+        setAlertSeverity('error');
+        setAlertMessage('Sessão expirada');
+        setIsAlertOpen(true);
         localStorage.removeItem('token');
-        location.reload();
+        setTimeout(() => {
+          location.reload();
+        }, 5000);
         return;
       }
-      
-      alert(err.response.data.message);
+
+      const { message } = err.response.data;
+      setAlertSeverity('error');
+      setAlertMessage(message);
+      setIsAlertOpen(true);
     }}
 
   return (
     <>
+    <Message 
+        visibility={isAlertOpen}
+        type={alertSeverity}>
+          {alertMessage}
+      </Message>
     <CreateCompanyContainer>
       <header>
         <Person fontSize="large"/>

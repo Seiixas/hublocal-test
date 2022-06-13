@@ -1,8 +1,9 @@
 import { TextField } from "@material-ui/core"
-import { Apartment, Person, Place } from "@material-ui/icons"
+import { Person } from "@material-ui/icons"
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { api } from "../../lib/api";
+import { Message } from "../Message";
 import { CreateCompanyContainer } from './style';
 
 interface IResponsible {
@@ -22,6 +23,10 @@ interface IResponsible {
 export function ViewResponsible() {
   const token = localStorage.getItem('token');
   const params = useParams();
+
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertSeverity, setAlertSeverity] = useState<'success' | 'error' | 'warning'>('success');
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
 
   const [responsible, setResponsible] = useState<IResponsible>();
 
@@ -51,13 +56,20 @@ export function ViewResponsible() {
         const { status } = err.response;
                   
         if (status === 401) {
-          alert('Sessão expirada');
+          setAlertSeverity('error');
+          setAlertMessage('Sessão expirada');
+          setIsAlertOpen(true);
           localStorage.removeItem('token');
-          location.reload();
+          setTimeout(() => {
+            location.reload();
+          }, 5000);
           return;
         }
-        
-        alert(err.response.data.message);
+
+        const { message } = err.response.data;
+        setAlertSeverity('error');
+        setAlertMessage(message);
+        setIsAlertOpen(true);
       }
     }
     fetchData();
@@ -65,6 +77,11 @@ export function ViewResponsible() {
 
   return (
     <>
+    <Message 
+        visibility={isAlertOpen}
+        type={alertSeverity}>
+          {alertMessage}
+      </Message>
     <CreateCompanyContainer>
       <header>
         <Person fontSize="large"/>

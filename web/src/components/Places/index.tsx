@@ -1,10 +1,11 @@
-import { Box, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from "@material-ui/core";
-import { Add, Delete, Edit, Place, Search, Visibility } from "@material-ui/icons";
+import { Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from "@material-ui/core";
+import { Add, Delete, Edit, Place, Visibility } from "@material-ui/icons";
 import { Autocomplete, SpeedDial, SpeedDialAction } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../../lib/api";
 import { handleChangePage } from "../../utils/chagePage";
+import { Message } from "../Message";
 import { Container } from "./style";
 
 interface IPlace {
@@ -26,11 +27,14 @@ interface ICompany {
 }
 
 export function Places() {
-
   const token = localStorage.getItem('token');
 
   const [companies, setCompanies] = useState<ICompany[]>([]);
   const [places, setPlaces] = useState<IPlace[]>([]);
+
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertSeverity, setAlertSeverity] = useState<'success' | 'error' | 'warning'>('success');
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
 
   useEffect(() => {
     const fetchPlacesData = async () => {
@@ -43,15 +47,22 @@ export function Places() {
         setPlaces(response.data);
       } catch (err: any) {
         const { status } = err.response;
-        
+                  
         if (status === 401) {
-          alert('Sessão expirada');
+          setAlertSeverity('error');
+          setAlertMessage('Sessão expirada');
+          setIsAlertOpen(true);
           localStorage.removeItem('token');
-          location.reload();
+          setTimeout(() => {
+            location.reload();
+          }, 5000);
           return;
         }
 
-        alert(err.response.data.message);
+        const { message } = err.response.data;
+        setAlertSeverity('error');
+        setAlertMessage(message);
+        setIsAlertOpen(true);
       }
     }
 
@@ -72,15 +83,22 @@ export function Places() {
         setCompanies(companiesFormatted);
       } catch (err: any) {
         const { status } = err.response;
-        
+                  
         if (status === 401) {
-          alert('Sessão expirada');
+          setAlertSeverity('error');
+          setAlertMessage('Sessão expirada');
+          setIsAlertOpen(true);
           localStorage.removeItem('token');
-          location.reload();
+            setTimeout(() => {
+              location.reload();
+            }, 5000);
           return;
         }
 
-        alert(err.response.data.message);
+        const { message } = err.response.data;
+        setAlertSeverity('error');
+        setAlertMessage(message);
+        setIsAlertOpen(true);
       }
     }
   
@@ -94,7 +112,9 @@ export function Places() {
     const place = places.filter((place) => place.companyId === id);
 
     if (!place) {
-      alert('Companhia sem localização');
+      setAlertSeverity('warning');
+      setAlertMessage('Companhia sem localização');
+      setIsAlertOpen(true);
       return;
     }
 
@@ -107,34 +127,46 @@ export function Places() {
 
     if (iwant) {
       try {
-        const response = await api.delete(`/places/${id}`);
-      
-        if (response.status === 401) {
-          alert('Sessão expirada');
-          localStorage.removeItem('token');
-          return;
-        }
+        const response = await api.delete(`/places/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}` 
+          }
+        });
         
         if (response.status === 204) {
-          alert(`${placeToRemove?.name} deletada com sucesso!`)
+          setAlertSeverity('success');
+          setAlertMessage(`${placeToRemove?.name} deletada com sucesso!`);
+          setIsAlertOpen(true);
         }
       } catch (err: any) {
         const { status } = err.response;
-        
+                  
         if (status === 401) {
-          alert('Sessão expirada');
+          setAlertSeverity('error');
+          setAlertMessage('Sessão expirada');
+          setIsAlertOpen(true);
           localStorage.removeItem('token');
-          location.reload();
+          setTimeout(() => {
+            location.reload();
+          }, 5000);
           return;
         }
 
-        alert(err.response.data.message);
+        const { message } = err.response.data;
+        setAlertSeverity('error');
+        setAlertMessage(message);
+        setIsAlertOpen(true);
       }
     }
   }
 
   return (
     <Container>
+      <Message
+        visibility={isAlertOpen}
+        type={alertSeverity}>
+          {alertMessage}
+      </Message>
       <SpeedDial
         ariaLabel="SpeedDial basic example"
         sx={{ position: 'absolute', bottom: 16, right: 16 }}
@@ -158,22 +190,27 @@ export function Places() {
                 const fetchResponsibleData = async () => {
                   const response = await api.get('/places');
                   setPlaces(response.data);
-            
-                  console.log(response.data);
                 }
   
                 fetchResponsibleData();
               } catch (err: any) {
                 const { status } = err.response;
-        
+                  
                 if (status === 401) {
-                  alert('Sessão expirada');
+                  setAlertSeverity('error');
+                  setAlertMessage('Sessão expirada');
+                  setIsAlertOpen(true);
                   localStorage.removeItem('token');
-                  location.reload();
+                  setTimeout(() => {
+                    location.reload();
+                  }, 5000);
                   return;
                 }
 
-                alert(err.response.data.message);
+                const { message } = err.response.data;
+                setAlertSeverity('error');
+                setAlertMessage(message);
+                setIsAlertOpen(true);
               }
             } else {
               handleSearch(value.id)

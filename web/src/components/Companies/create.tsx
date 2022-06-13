@@ -4,6 +4,7 @@ import { Button, TextField } from '@mui/material';
 import axios from 'axios';
 import React, { FormEvent, useState } from 'react';
 import { api } from '../../lib/api';
+import { Message } from '../Message';
 import { CreateCompanyContainer } from './style';
 
 const brazilianStates = [
@@ -143,6 +144,10 @@ export function CreateCompany() {
   const [responsibleState, setResponsibleState] = useState<string | null>('');
   const [responsibleCity, setResponsibleCity] = useState<string | null>(null);
 
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertSeverity, setAlertSeverity] = useState<'success' | 'error' | 'warning'>('success');
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
+
   async function handleCEP(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
     setCep(event.target.value);
     if (cep?.length === 8) {
@@ -227,15 +232,22 @@ export function CreateCompany() {
       });
     } catch (err: any) {
       const { status } = err.response;
-                
+                  
       if (status === 401) {
-        alert('Sessão expirada');
+        setAlertSeverity('error');
+        setAlertMessage('Sessão expirada');
+        setIsAlertOpen(true);
         localStorage.removeItem('token');
-        location.reload();
+        setTimeout(() => {
+          location.reload();
+        }, 5000);
         return;
       }
-      
-      alert(err.response.data.message);
+
+      const { message } = err.response.data;
+      setAlertSeverity('error');
+      setAlertMessage(message);
+      setIsAlertOpen(true);
     }
 
   }
@@ -243,7 +255,11 @@ export function CreateCompany() {
   return (
     <>
     <CreateCompanyContainer>
-      <header>
+    <Message
+        visibility={isAlertOpen}
+        type={alertSeverity}>
+          {alertMessage}
+      </Message>      <header>
         <Apartment fontSize="large"/>
         <h1>Cadastro de Empresa</h1>
      </header>

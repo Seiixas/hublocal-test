@@ -13,8 +13,6 @@ export function handleErrors(
       message: err.message,
     });
   }
-
-  console.log('AppError');
   return response.status(500).json({
     status: 'error',
     message: `Internal server error - ${err.message}`,
