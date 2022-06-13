@@ -1,7 +1,7 @@
 import { Container } from "../Signin/style";
 
 import hublocalGif from '../../assets/signin/hublocal-logo-animated.gif';
-import { Button, TextField } from "@mui/material";
+import { Button, TextField, Typography } from "@mui/material";
 import { FormEvent, useState } from "react";
 import { api } from "../../lib/api";
 import { Message } from "../Message";
@@ -50,7 +50,7 @@ export function Signup() {
       </Message>
       <form onSubmit={handleSignup}>
         <img src={hublocalGif} alt="" />
-        <h2>Efetue o seu cadastro</h2>
+        <Typography variant="h5">Efetue o seu cadastro</Typography>
 
         <TextField 
           placeholder="Ex: Maria José da Silva"

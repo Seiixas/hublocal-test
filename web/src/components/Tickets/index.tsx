@@ -1,4 +1,4 @@
-import { Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from "@material-ui/core";
+import { Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from "@material-ui/core";
 import { Visibility } from "@material-ui/icons";
 import { Autocomplete } from "@mui/material";
 import { useEffect, useState } from "react";
@@ -120,7 +120,7 @@ export function Tickets() {
           {alertMessage}
       </Message>
       <header>
-        <h2>Tickets</h2>
+        <Typography variant="h5">Tickets</Typography>
         <div className="search-bar">
         <Autocomplete
           disablePortal

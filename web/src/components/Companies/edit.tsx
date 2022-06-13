@@ -1,5 +1,5 @@
 import { Apartment } from '@material-ui/icons';
-import { Button, TextField } from '@mui/material';
+import { Button, TextField, Typography } from '@mui/material';
 import { FormEvent, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { api } from '../../lib/api';
@@ -96,11 +96,11 @@ export function Edit() {
       </Message>
       <header>
         <Apartment fontSize="large"/>
-        <h1>Atualização de Empresa</h1>
+        <Typography variant="h4">Atualização de Empresa</Typography>
      </header>
 
      <form onSubmit={handleEditCompany}>
-       <h2>Dados da Empresa</h2>
+       <Typography variant="h5">Dados da Empresa</Typography>
        <span>Insira os dados relacionados à empresa</span>
        <hr />
        <TextField 

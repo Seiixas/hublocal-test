@@ -1,4 +1,4 @@
-import { TextField } from "@material-ui/core"
+import { TextField, Typography } from "@material-ui/core"
 import { Person } from "@material-ui/icons"
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -85,11 +85,11 @@ export function ViewResponsible() {
     <CreateCompanyContainer>
       <header>
         <Person fontSize="large"/>
-        <h1>{ responsible?.name }</h1>
+        <Typography variant="h4">{ responsible?.name }</Typography>
      </header>
 
      <form>
-       <h2>Responsável</h2>
+       <Typography variant="h5">Responsável</Typography>
        <span>Dados relacionados ao responsável</span>
        <hr />
        <TextField 
@@ -108,7 +108,7 @@ export function ViewResponsible() {
           disabled
           value={responsible?.phone_number} />  
 
-        <h2>Localização</h2>
+        <Typography variant="h5">Localização</Typography>
         <span>Dados relacionados à localização do resonsável</span>
 
          <TextField 

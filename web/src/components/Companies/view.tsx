@@ -1,4 +1,4 @@
-import { TextField } from "@material-ui/core"
+import { TextField, Typography } from "@material-ui/core"
 import { Apartment } from "@material-ui/icons"
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -70,11 +70,11 @@ export function ViewCompany() {
       </Message>
       <header>
         <Apartment fontSize="large"/>
-        <h1>{ company?.name }</h1>
+        <Typography variant="h4">{ company?.name }</Typography>
      </header>
 
      <form>
-       <h2>Empresa</h2>
+       <Typography variant="h5">Empresa</Typography>
        <span>Dados relacionados à empresa</span>
        <hr />
        <TextField 

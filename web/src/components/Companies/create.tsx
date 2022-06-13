@@ -1,4 +1,4 @@
-import { Box, MenuItem, Tab, Tabs } from '@material-ui/core';
+import { Box, MenuItem, Tab, Tabs, Typography } from '@material-ui/core';
 import { Apartment } from '@material-ui/icons';
 import { Button, TextField } from '@mui/material';
 import axios from 'axios';
@@ -259,13 +259,14 @@ export function CreateCompany() {
         visibility={isAlertOpen}
         type={alertSeverity}>
           {alertMessage}
-      </Message>      <header>
+      </Message>      
+      <header>
         <Apartment fontSize="large"/>
-        <h1>Cadastro de Empresa</h1>
-     </header>
+        <Typography variant="h4">Cadastro de Empresa</Typography>
+      </header>
 
      <form onSubmit={handleSubmit}>
-       <h2>Empresa</h2>
+       <Typography variant="h5">Empresa</Typography>
        <span>Insira os dados relacionados à empresa</span>
        <hr />
        <TextField 
@@ -290,7 +291,7 @@ export function CreateCompany() {
           onChange={(event) => setDescription(event.target.value)}
           multiline />
 
-        <h2>Local</h2>
+        <Typography variant="h5">Local</Typography>
         <span>Insira os dados relacionados à localização da empresa</span>
         <hr />
         <TextField 
@@ -361,7 +362,7 @@ export function CreateCompany() {
         </TextField>
 
       
-        <h2>Responsáveis</h2>
+        <Typography variant="h5">Responsáveis</Typography>
         <span>Insira os dados relacionados ao responsável</span>
 
         <TextField 

@@ -1,4 +1,4 @@
-import { Button, TextField } from "@material-ui/core"
+import { Button, TextField, Typography } from "@material-ui/core"
 import { Check, Close, Person } from "@material-ui/icons"
 import { FormEvent, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -260,11 +260,11 @@ export function ViewTicket() {
     <CreateCompanyContainer>
       <header>
         <Person fontSize="large"/>
-        <h1>{ ticket?.name }</h1>
+        <Typography variant="h4">{ ticket?.name }</Typography>
      </header>
 
      <form onSubmit={handleSubmit}>
-       <h2>Ticket</h2>
+       <Typography variant="h5">Ticket</Typography>
        <span>Dados relacionados ao responsável</span>
        <hr />
        <TextField 
@@ -283,7 +283,7 @@ export function ViewTicket() {
           disabled
           value={ticket?.status} />
 
-        <h2>Dados atuais</h2>
+        <Typography variant="h5">Dados atuais</Typography>
         <span>Dados que já estão persistidos no banco de dados.</span>
 
          <TextField 
@@ -316,7 +316,7 @@ export function ViewTicket() {
           disabled
           value={place?.number} />
 
-        <h2>Dados para alteração</h2>
+        <Typography variant="h5">Dados para alteração</Typography>
         <span>Dados da proposta de alteração que gerou este ticket.</span>
 
          <TextField 

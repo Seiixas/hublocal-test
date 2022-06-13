@@ -1,4 +1,4 @@
-import { MenuItem } from '@material-ui/core';
+import { MenuItem, Typography } from '@material-ui/core';
 import { Place } from '@material-ui/icons';
 import { Autocomplete, Button, TextField } from '@mui/material';
 import axios from 'axios';
@@ -262,11 +262,11 @@ export function CreatePlace() {
       <CreateCompanyContainer>
         <header>
           <Place fontSize="large"/>
-          <h1>Cadastro de Local</h1>
+          <Typography variant="h4">Cadastro de Local</Typography>
         </header>
 
       <form onSubmit={handleSubmit}>
-          <h2>Local</h2>
+          <Typography variant="h5">Local</Typography>
           <span>Insira os dados relacionados à localização da empresa</span>
           <hr />
           <Autocomplete

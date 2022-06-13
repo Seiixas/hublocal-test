@@ -1,4 +1,4 @@
-import { Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from "@material-ui/core";
+import { Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from "@material-ui/core";
 import { Add, Delete, Edit, Place, Visibility } from "@material-ui/icons";
 import { Autocomplete, SpeedDial, SpeedDialAction } from "@mui/material";
 import { useEffect, useState } from "react";
@@ -179,7 +179,7 @@ export function Places() {
           />
       </SpeedDial>
       <header>
-        <h2>Localizações</h2>
+        <Typography variant="h5">Localizações</Typography>
         <div className="search-bar">
         <Autocomplete
           disablePortal

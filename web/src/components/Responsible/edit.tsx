@@ -1,4 +1,4 @@
-import { MenuItem } from '@material-ui/core';
+import { MenuItem, Typography } from '@material-ui/core';
 import { Apartment } from '@material-ui/icons';
 import { Button, TextField } from '@mui/material';
 import axios from 'axios';
@@ -253,11 +253,11 @@ export function EditResponsible() {
     <CreateCompanyContainer>
       <header>
         <Apartment fontSize="large"/>
-        <h1>Cadastro de Responsável</h1>
+        <Typography variant="h4">Cadastro de Responsável</Typography>
      </header>
 
      <form onSubmit={handleSubmit}>
-        <h2>Responsáveis</h2>
+        <Typography variant="h5">Responsáveis</Typography>
         <span>Insira os dados relacionados ao responsável</span>
 
         <TextField 

@@ -1,4 +1,4 @@
-import { Box, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from "@material-ui/core";
+import { Box, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from "@material-ui/core";
 import { Add, Check, Close, Delete, Edit, Person, Search, Visibility } from "@material-ui/icons";
 import { Autocomplete, SpeedDial, SpeedDialAction } from "@mui/material";
 import { useEffect, useState } from "react";
@@ -179,7 +179,7 @@ export function Responsible() {
           />
       </SpeedDial>
       <header>
-        <h2>Responsáveis</h2>
+        <Typography variant="h5">Responsáveis</Typography>
         <div className="search-bar">
         <Autocomplete
           disablePortal

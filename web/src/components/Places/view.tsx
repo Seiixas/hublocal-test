@@ -1,4 +1,4 @@
-import { TextField } from "@material-ui/core"
+import { TextField, Typography } from "@material-ui/core"
 import { Place } from "@material-ui/icons"
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -81,11 +81,11 @@ export function ViewPlace() {
     <CreateCompanyContainer>
       <header>
         <Place fontSize="large"/>
-        <h1>{ place?.name }</h1>
+        <Typography variant="h4">{ place?.name }</Typography>
      </header>
 
      <form>
-       <h2>Localização</h2>
+       <Typography variant="h5">Localização</Typography>
        <span>Dados relacionados à localização</span>
        <hr />
        <TextField 
