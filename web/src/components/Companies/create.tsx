@@ -215,7 +215,7 @@ export function CreateCompany() {
         }
       });
   
-      await api.post('/responsibles', {
+      const responsible = await api.post('/responsibles', {
         name: responsibleName,
         phone_number: phoneNumber,
         cep: responsibleCep,
@@ -231,6 +231,16 @@ export function CreateCompany() {
           Authorization: `Bearer ${token}` 
         }
       });
+
+      const responsibleId = responsible.data.id;
+
+      await api.patch(`/responsible/${responsibleId}`, {
+        company_id: id
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}` 
+        }
+      })
     } catch (err: any) {
       const { status } = err.response;
                   

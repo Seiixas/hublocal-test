@@ -22,7 +22,7 @@ class CreateResponsibleController {
       CreateResponsibleUseCase
     );
 
-    await createResponsibleUseCase.execute({
+    const { id } = await createResponsibleUseCase.execute({
       name,
       phone_number,
       public_place,
@@ -35,7 +35,7 @@ class CreateResponsibleController {
       company_id,
     });
 
-    return response.status(201).send();
+    return response.status(201).json(id);
   }
 }
 
