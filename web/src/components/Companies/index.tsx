@@ -75,6 +75,7 @@ export function Companies() {
           setAlertSeverity('success');
           setAlertMessage(`${company?.name} deletada com sucesso!`);
           setIsAlertOpen(true);
+          location.reload();
         }
       } catch (err: any) {
         const { status } = err.response;

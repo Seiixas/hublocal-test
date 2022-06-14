@@ -124,6 +124,7 @@ export function Responsible() {
           setAlertSeverity('success');
           setAlertMessage(`${responsibleToRemove?.name} deletada com sucesso!`);
           setIsAlertOpen(true);
+          location.reload();
         }
       } catch (err: any) {
         const { status } = err.response;
