@@ -8,7 +8,7 @@ const PORT = 3333;
 dataSource
   .initialize()
   .then(() => {
-    app.listen(PORT, () => {
+    app.listen(process.env.PORT || PORT, () => {
       return console.log(`🚀 Service started at port - ${PORT}`);
     });
   })
