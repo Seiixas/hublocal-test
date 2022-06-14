@@ -1,9 +1,9 @@
-import {  MenuItem, Typography } from '@material-ui/core';
+import {  Breadcrumbs, MenuItem, Typography } from '@material-ui/core';
 import { Place } from '@material-ui/icons';
 import { Button, TextField } from '@mui/material';
 import axios from 'axios';
 import { FormEvent, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { api } from '../../lib/api';
 import { Message } from '../Message';
 import { CreateCompanyContainer } from './style';
@@ -259,9 +259,19 @@ export function EditPlace() {
           {alertMessage}
       </Message>
       <CreateCompanyContainer>
-        <header>
+        <header><div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
           <Place fontSize="large"/>
           <Typography variant="h4">Atualizar Local</Typography>
+        </div>
+        <Breadcrumbs aria-label="breadcrumb" style={{ marginBottom: '1rem' }}>
+          <Link color="inherit" to="/" style={{ color: "white" }}>
+            Dashboard
+          </Link>
+          <Link color="inherit" to="/places" style={{ color: "white" }}>
+            Locais
+          </Link>
+          <Typography>Atualizar Local</Typography>
+        </Breadcrumbs>
         </header>
 
       <form onSubmit={handleSubmit}>

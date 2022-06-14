@@ -1,7 +1,7 @@
 import { Apartment } from '@material-ui/icons';
-import { Button, TextField, Typography } from '@mui/material';
+import { Breadcrumbs, Button, TextField, Typography } from '@mui/material';
 import { FormEvent, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { api } from '../../lib/api';
 import { Message } from '../Message';
 import { CreateCompanyContainer } from './style';
@@ -95,8 +95,19 @@ export function Edit() {
           {alertMessage}
       </Message>
       <header>
-        <Apartment fontSize="large"/>
-        <Typography variant="h4">Atualização de Empresa</Typography>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <Apartment fontSize="large"/>
+          <Typography variant="h4">Atualização de Empresa</Typography>
+        </div>
+        <Breadcrumbs aria-label="breadcrumb" style={{ marginBottom: '1rem' }}>
+          <Link color="inherit" to="/" style={{ color: "white" }}>
+            Dashboard
+          </Link>
+          <Link color="inherit" to="/companies" style={{ color: "white" }}>
+            Empresas
+          </Link>
+          <Typography>Atualizar Empresa</Typography>
+        </Breadcrumbs>
      </header>
 
      <form onSubmit={handleEditCompany}>

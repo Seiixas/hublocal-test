@@ -1,7 +1,7 @@
-import { TextField, Typography } from "@material-ui/core"
+import { Breadcrumbs, TextField, Typography } from "@material-ui/core"
 import { Person } from "@material-ui/icons"
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { api } from "../../lib/api";
 import { Message } from "../Message";
 import { CreateCompanyContainer } from './style';
@@ -84,8 +84,19 @@ export function ViewResponsible() {
       </Message>
     <CreateCompanyContainer>
       <header>
-        <Person fontSize="large"/>
-        <Typography variant="h4">{ responsible?.name }</Typography>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <Person fontSize="large"/>
+          <Typography variant="h4">{ responsible?.name }</Typography>
+        </div>
+        <Breadcrumbs aria-label="breadcrumb" style={{ marginBottom: '1rem' }}>
+          <Link color="inherit" to="/" style={{ color: "white" }}>
+            Dashboard
+          </Link>
+          <Link color="inherit" to="/responsible" style={{ color: "white" }}>
+            Responsáveis
+          </Link>
+          <Typography>Ver Responsável</Typography>
+        </Breadcrumbs>
      </header>
 
      <form>

@@ -1,4 +1,4 @@
-import { Box, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from "@material-ui/core";
+import { Box, Breadcrumbs, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from "@material-ui/core";
 import { Add, Check, Close, Delete, Edit, Person, Search, Visibility } from "@material-ui/icons";
 import { Autocomplete, SpeedDial, SpeedDialAction } from "@mui/material";
 import { useEffect, useState } from "react";
@@ -179,6 +179,12 @@ export function Responsible() {
           />
       </SpeedDial>
       <header>
+        <Breadcrumbs aria-label="breadcrumb" style={{ marginBottom: '1rem' }}>
+          <Link color="inherit" to="/" style={{ color: "white" }}>
+            Dashboard
+          </Link>
+          <Typography>Responsáveis</Typography>
+        </Breadcrumbs>
         <Typography variant="h5">Responsáveis</Typography>
         <div className="search-bar">
         <Autocomplete

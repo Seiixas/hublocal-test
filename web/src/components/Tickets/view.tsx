@@ -1,7 +1,7 @@
-import { Button, TextField, Typography } from "@material-ui/core"
+import { Breadcrumbs, Button, TextField, Typography } from "@material-ui/core"
 import { Check, Close, Person } from "@material-ui/icons"
 import { FormEvent, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { api } from "../../lib/api";
 import { Message } from "../Message";
 import { CreateCompanyContainer } from './style';
@@ -263,8 +263,19 @@ export function ViewTicket() {
       </Message>
     <CreateCompanyContainer>
       <header>
-        <Person fontSize="large"/>
-        <Typography variant="h4">{ ticket?.name }</Typography>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <Person fontSize="large"/>
+          <Typography variant="h4">{ ticket?.name }</Typography>
+        </div>
+        <Breadcrumbs aria-label="breadcrumb" style={{ marginBottom: '1rem' }}>
+          <Link color="inherit" to="/" style={{ color: "white" }}>
+            Dashboard
+          </Link>
+          <Link color="inherit" to="/tickets" style={{ color: "white" }}>
+            Tickets
+          </Link>
+          <Typography>Ver Ticket</Typography>
+        </Breadcrumbs>
      </header>
 
      <form onSubmit={handleSubmit}>

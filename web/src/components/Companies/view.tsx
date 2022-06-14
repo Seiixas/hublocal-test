@@ -1,7 +1,7 @@
-import { TextField, Typography } from "@material-ui/core"
+import { Breadcrumbs, TextField, Typography } from "@material-ui/core"
 import { Apartment } from "@material-ui/icons"
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { api } from "../../lib/api";
 import { Message } from "../Message";
 import { CreateCompanyContainer } from './style';
@@ -69,8 +69,19 @@ export function ViewCompany() {
           {alertMessage}
       </Message>
       <header>
-        <Apartment fontSize="large"/>
-        <Typography variant="h4">{ company?.name }</Typography>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <Apartment fontSize="large"/>
+          <Typography variant="h4">{ company?.name }</Typography>
+        </div>
+        <Breadcrumbs aria-label="breadcrumb" style={{ marginBottom: '1rem' }}>
+          <Link color="inherit" to="/" style={{ color: "white" }}>
+            Dashboard
+          </Link>
+          <Link color="inherit" to="/companies" style={{ color: "white" }}>
+            Empresas
+          </Link>
+          <Typography>Ver Empresa</Typography>
+        </Breadcrumbs>
      </header>
 
      <form>

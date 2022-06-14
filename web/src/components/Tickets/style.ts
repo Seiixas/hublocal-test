@@ -48,6 +48,7 @@ export const CreateCompanyContainer = styled.div`
     display: flex;
     align-items: center;
     justify-content: space-between;
+    align-items: center;
     background: #4884fc;
     color: white;
     padding: 1rem;
