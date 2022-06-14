@@ -220,7 +220,7 @@ export function ViewTicket() {
         }
       });
 
-      if (response.status === 201) {
+      if (response.status === 204) {
         setAlertSeverity('success');
         setAlertMessage('Local atualizado!');
         setIsAlertOpen(true);
@@ -228,6 +228,10 @@ export function ViewTicket() {
 
       await api.patch(`/tickets/${params.id}`, {
         status: 'CONCLUÍDO'
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}` 
+        }
       });
       
     } catch (err: any) {

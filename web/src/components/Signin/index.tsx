@@ -27,6 +27,7 @@ export function Singin() {
       const { auth } = response.data;
 
       localStorage.setItem('token', auth);
+      location.reload();
     } catch (err: any) {
       const { message } = err.response.data;
       setAlertSeverity('error');

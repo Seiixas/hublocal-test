@@ -9,8 +9,10 @@ import { Container } from "./style";
 
 interface ITicket {
   id: string;
+  name: string;
   status: string;
   placeId: string;
+  created_at: string;
 }
 
 interface IPlace {
@@ -36,6 +38,7 @@ export function Tickets() {
             Authorization: `Bearer ${token}` 
           }
         });
+
         setTickets(response.data);
       } catch (err: any) {
         const { status } = err.response;
@@ -167,9 +170,9 @@ export function Tickets() {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>ID</TableCell>
+              <TableCell>Nome</TableCell>
               <TableCell>Status</TableCell>
-              <TableCell>Local</TableCell>
+              <TableCell>Criação</TableCell>
               <TableCell align="center">Ações</TableCell>
             </TableRow>
           </TableHead>
@@ -177,11 +180,9 @@ export function Tickets() {
             {
               tickets.map((row) => (
                 <TableRow key={row.id}>
-                  <TableCell>{row.id}</TableCell>
+                  <TableCell>{row.name}</TableCell>
                   <TableCell>{row.status}</TableCell>
-                  <TableCell>{
-                    row.placeId
-                  }</TableCell>
+                  <TableCell>{row.created_at}</TableCell>
                   <TableCell align="center">
                     <Link to={`/tickets/${row.id}`}>
                       <Button>
