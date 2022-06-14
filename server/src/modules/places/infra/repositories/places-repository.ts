@@ -27,6 +27,7 @@ class PlacesRepository implements IPlacesRepository {
   }
 
   async create({
+    id,
     name,
     public_place,
     complement,
@@ -38,6 +39,7 @@ class PlacesRepository implements IPlacesRepository {
     company,
   }: ICreatePlace): Promise<Place> {
     const place = this.repository.create({
+      id,
       name,
       public_place,
       complement,
