@@ -79,6 +79,8 @@ export function Dashboard() {
               color="inherit"
               onClick={() => {
                 localStorage.removeItem('token');
+                localStorage.removeItem('name');
+                localStorage.removeItem('id');
                 location.reload();
               }}>
               <PowerSettingsNew />

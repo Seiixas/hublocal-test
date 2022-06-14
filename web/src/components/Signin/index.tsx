@@ -25,8 +25,11 @@ export function Singin() {
       });
 
       const { auth } = response.data;
+      const { name, id } = response.data.user;
 
       localStorage.setItem('token', auth);
+      localStorage.setItem('name', name);
+      localStorage.setItem('id', id);
       location.reload();
     } catch (err: any) {
       const { message } = err.response.data;

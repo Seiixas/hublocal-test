@@ -172,8 +172,8 @@ export function EditPlace() {
         state: state,
         city: city,
         data_updated: dataUpdated,
-        created_by: '926be774-646f-428d-b8ed-cc165b6e2689',
-        updated_by: '926be774-646f-428d-b8ed-cc165b6e2689'
+        created_by: localStorage.getItem('id'),
+        updated_by: localStorage.getItem('id')
       }, {
         headers: {
           Authorization: `Bearer ${token}` 
@@ -193,6 +193,8 @@ export function EditPlace() {
         setAlertMessage('Sessão expirada');
         setIsAlertOpen(true);
         localStorage.removeItem('token');
+        localStorage.removeItem('name');
+        localStorage.removeItem('id');
         setTimeout(() => {
           location.reload();
         }, 5000);
@@ -233,6 +235,8 @@ export function EditPlace() {
           setAlertMessage('Sessão expirada');
           setIsAlertOpen(true);
           localStorage.removeItem('token');
+          localStorage.removeItem('name');
+          localStorage.removeItem('id');
           setTimeout(() => {
             location.reload();
           }, 5000);

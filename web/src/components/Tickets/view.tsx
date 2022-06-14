@@ -78,6 +78,8 @@ export function ViewTicket() {
           setAlertMessage('Sessão expirada');
           setIsAlertOpen(true);
           localStorage.removeItem('token');
+          localStorage.removeItem('name');
+          localStorage.removeItem('id');
           setTimeout(() => {
             location.reload();
           }, 5000);
@@ -120,6 +122,8 @@ export function ViewTicket() {
           setAlertMessage('Sessão expirada');
           setIsAlertOpen(true);
           localStorage.removeItem('token');
+          localStorage.removeItem('name');
+          localStorage.removeItem('id');
           setTimeout(() => {
             location.reload();
           }, 5000);
@@ -151,6 +155,8 @@ export function ViewTicket() {
             setAlertMessage('Sessão expirada');
             setIsAlertOpen(true);
             localStorage.removeItem('token');
+            localStorage.removeItem('name');
+            localStorage.removeItem('id');
             setTimeout(() => {
               location.reload();
             }, 5000);
@@ -188,6 +194,8 @@ export function ViewTicket() {
         setAlertMessage('Sessão expirada');
         setIsAlertOpen(true);
         localStorage.removeItem('token');
+        localStorage.removeItem('name');
+        localStorage.removeItem('id');
         setTimeout(() => {
           location.reload();
         }, 5000);
@@ -242,6 +250,8 @@ export function ViewTicket() {
         setAlertMessage('Sessão expirada');
         setIsAlertOpen(true);
         localStorage.removeItem('token');
+        localStorage.removeItem('name');
+        localStorage.removeItem('id');
         setTimeout(() => {
           location.reload();
         }, 5000);
