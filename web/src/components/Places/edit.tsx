@@ -127,6 +127,8 @@ export function EditPlace() {
   const [alertSeverity, setAlertSeverity] = useState<'success' | 'error' | 'warning'>('success');
   const [isAlertOpen, setIsAlertOpen] = useState(false);
 
+  const [isCepCorrect, setIsCepCorrect] = useState(false);
+
   const [oldPlaceName, setOldPlaceName] = useState<string>('');
 
   const [placeName, setPlaceName] = useState<string | null>('');
@@ -139,9 +141,7 @@ export function EditPlace() {
   const [city, setCity] = useState<string | null>('');
   const [dataUpdated, setDataUpdated] = useState<string | null>('');
 
-  async function handleCEP(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-    setCep(event.target.value);
-    if (cep?.length === 8) {
+  async function handleCEP() {
       const response = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
 
       if (response.data.error === 'true') {
@@ -152,8 +152,9 @@ export function EditPlace() {
         setDistrict(response.data.bairro);
         setCity(response.data.localidade);
         setState(response.data.uf);
+        setIsCepCorrect(true);
       }    
-    }
+    
   }
 
   async function handleSubmit(event: FormEvent) {
@@ -278,21 +279,30 @@ export function EditPlace() {
           <Typography variant="h5">Local</Typography>
           <span>Insira os dados relacionados à localização da empresa</span>
           <hr />
+         
           <TextField 
           placeholder="Ex: Matriz"
           type="text"
           label="Nome"
           required
-          value={placeName}
+          disabled={!isCepCorrect}
           onChange={(event) => setPlaceName(event.target.value)} />
 
-        <TextField 
-          placeholder="Apenas números"
-          type="number"
-          label="CEP"
-          value={cep}
-          required
-          onChange={(event) => { handleCEP(event) }} />
+        <div style={{display: 'flex', gap: '.5rem'}}>
+          <TextField 
+            placeholder="Apenas números"
+            type="number"
+            label="CEP"
+            required
+            value={cep}
+            disabled={isCepCorrect}
+            style={{ width: '90%' }}
+            onChange={(event) => setCep(event.target.value)} />
+          
+          <Button
+            onClick={handleCEP}
+            style={{ width: '10%' }}>Buscar</Button>
+        </div>
 
         <TextField 
           placeholder="Ex: Av. Pinheiro da Silva"
@@ -300,6 +310,7 @@ export function EditPlace() {
           label="Logradouro"
           value={publicPlace}
           required
+          disabled={!isCepCorrect}
           onChange={(event) => setPublicPlace(event.target.value)} />
 
         <TextField 
@@ -307,6 +318,7 @@ export function EditPlace() {
           type="text"
           label="Complemento"
           value={complement}
+          disabled={!isCepCorrect}
           onChange={(event) => setComplement(event.target.value)} />
 
          <TextField 
@@ -315,13 +327,14 @@ export function EditPlace() {
             label="Bairro"
             value={district}
             required
+            disabled={!isCepCorrect}
             onChange={(event) => setDistrict(event.target.value)} />
 
         <TextField 
           placeholder="Ex: 280A"
           type="text"
           label="Número"
-          value={number}
+          disabled={!isCepCorrect}
           required
           onChange={(event) => setNumber(event.target.value)} />
         
@@ -331,6 +344,7 @@ export function EditPlace() {
           label="Cidade"
           value={city}
           disabled
+          required
           onChange={(event) => setCity(event.target.value)} />
         
         <TextField
@@ -339,6 +353,7 @@ export function EditPlace() {
           label="Estado"
           value={state}
           disabled
+          required
           onChange={(event) => setState(event.target.value)}
         >
           {brazilianStates.map((option) => (

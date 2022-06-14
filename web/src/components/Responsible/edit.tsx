@@ -123,6 +123,8 @@ export function EditResponsible() {
   const token = localStorage.getItem('token');
   const params = useParams();
 
+  const [isCepCorrect, setIsCepCorrect] = useState(false);
+
   const [alertMessage, setAlertMessage] = useState('');
   const [alertSeverity, setAlertSeverity] = useState<'success' | 'error' | 'warning'>('success');
   const [isAlertOpen, setIsAlertOpen] = useState(false);
@@ -183,9 +185,7 @@ export function EditResponsible() {
     
   }
 
-  async function handleCEPResponsible(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-    setResponsibleCep(event.target.value);
-    if (responsibleCep?.length === 8) {
+  async function handleCEPResponsible() {
       const response = await axios.get(`https://viacep.com.br/ws/${responsibleCep}/json/`);
 
       if (response.data.error === 'true') {
@@ -196,8 +196,9 @@ export function EditResponsible() {
         setResponsibleDistrict(response.data.bairro);
         setResponsibleCity(response.data.localidade);
         setResponsibleState(response.data.uf);
+        setIsCepCorrect(true);
       }    
-    }
+    
   }
 
   useEffect(() => {
@@ -285,32 +286,46 @@ export function EditResponsible() {
           value={phoneNumber}
           onChange={(event) => setPhoneNumber(event.target.value)} />
 
-        <TextField 
-          placeholder="Apenas números"
-          type="number"
-          label="CEP"
-          value={responsibleCep}
-          onChange={(event) => handleCEPResponsible(event)} />
+        <div style={{display: 'flex', gap: '.5rem'}}>
+          <TextField 
+            placeholder="Apenas números"
+            type="number"
+            label="CEP"
+            required
+            value={responsibleCep}
+            disabled={isCepCorrect}
+            style={{ width: '90%' }}
+            onChange={(event) => setResponsibleCep(event.target.value)} />
+          
+          <Button
+            onClick={handleCEPResponsible}
+            style={{ width: '10%' }}>Buscar</Button>
+        </div>
 
         <TextField 
           placeholder="Ex: Av. Pinheiro da Silva"
           type="text"
-          label="Logradouro" 
+          label="Logradouro"
+          required
           value={responsiblePublicPlace}
-          onChange={(event) => setResponsiblePublicPlace(event.target.value)}/>
+          disabled={!isCepCorrect}
+          onChange={(event) => setResponsiblePublicPlace(event.target.value)} />
 
         <TextField 
           placeholder="Ex: Apartamento 105"
           type="text"
           label="Complemento"
           value={responsibleComplement}
+          disabled={!isCepCorrect}
           onChange={(event) => setResponsibleComplement(event.target.value)} />
 
          <TextField 
             placeholder="Ex: Centro"
             type="text"
             label="Bairro"
+            required
             value={responsibleDistrict}
+            disabled={!isCepCorrect}
             onChange={(event) => setResponsibleDistrict(event.target.value)} />
 
         <TextField 
@@ -318,7 +333,18 @@ export function EditResponsible() {
           type="text"
           label="Número"
           value={responsibleNumber}
+          disabled={!isCepCorrect}
+          required
           onChange={(event) => setResponsibleNumber(event.target.value)} />
+        
+        <TextField 
+          placeholder="Ex: São Paulo"
+          type="text"
+          label="Cidade"
+          value={responsibleCity}
+          disabled
+          required
+          onChange={(event) => setResponsibleCity(event.target.value)} />
         
         <TextField
           id="outlined-select-currency"
@@ -335,15 +361,6 @@ export function EditResponsible() {
             </MenuItem>
           ))}
         </TextField>
-        
-        <TextField 
-          placeholder="Ex: São Paulo"
-          type="text"
-          label="Cidade"
-          disabled
-          required
-          value={responsibleCity}
-          onChange={(event) => setResponsibleCity(event.target.value)} />
         <Button type="submit">Cadastrar</Button>
      </form>
       

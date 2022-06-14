@@ -131,6 +131,8 @@ export function CreateResponsible() {
   const [alertSeverity, setAlertSeverity] = useState<'success' | 'error' | 'warning'>('success');
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   
+  const [isCepCorrect, setIsCepCorrect] = useState(false);
+
   const [responsibleName, setResponsibleName] = useState<string | null>(null);
   const [phoneNumber, setPhoneNumber] = useState<string | null>(null);
   const [responsibleCep, setResponsibleCep] = useState<string | null>(null);
@@ -144,12 +146,12 @@ export function CreateResponsible() {
   const [companies, setCompanies] = useState<ICompany[]>([]);
   const [companyId, setCompanyId] = useState<string>('');
 
-  async function handleCEPResponsible(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-    setResponsibleCep(event.target.value);
-    if (responsibleCep?.length === 8) {
+  async function handleCEPResponsible() {
       const response = await axios.get(`https://viacep.com.br/ws/${responsibleCep}/json/`);
 
-      if (response.data.error === 'true') {
+      console.log(response);
+
+      if (response.data.erro === 'true') {
         alert('CEP inválido!');
       } else {
         setResponsiblePublicPlace(response.data.logradouro);
@@ -157,8 +159,9 @@ export function CreateResponsible() {
         setResponsibleDistrict(response.data.bairro);
         setResponsibleCity(response.data.localidade);
         setResponsibleState(response.data.uf);
+        setIsCepCorrect(true);
       }    
-    }
+    
   }
 
   async function handleSubmit(event: FormEvent) {
@@ -298,24 +301,36 @@ export function CreateResponsible() {
           required
           onChange={(event) => setPhoneNumber(event.target.value)} />
 
-        <TextField 
-          placeholder="Apenas números"
-          type="number"
-          label="CEP"
-          required
-          onChange={(event) => handleCEPResponsible(event)} />
+        <div style={{display: 'flex', gap: '.5rem'}}>
+          <TextField 
+            placeholder="Apenas números"
+            type="number"
+            label="CEP"
+            required
+            disabled={isCepCorrect}
+            style={{ width: '90%' }}
+            onChange={(event) => setResponsibleCep(event.target.value)} />
+          
+          <Button
+            onClick={handleCEPResponsible}
+            style={{ width: '10%' }}>Buscar</Button>
+        </div>
 
         <TextField 
           placeholder="Ex: Av. Pinheiro da Silva"
           type="text"
-          label="Logradouro" 
+          label="Logradouro"
           required
-          onChange={(event) => setResponsiblePublicPlace(event.target.value)}/>
+          value={responsiblePublicPlace}
+          disabled={!isCepCorrect}
+          onChange={(event) => setResponsiblePublicPlace(event.target.value)} />
 
         <TextField 
           placeholder="Ex: Apartamento 105"
           type="text"
           label="Complemento"
+          value={responsibleComplement}
+          disabled={!isCepCorrect}
           onChange={(event) => setResponsibleComplement(event.target.value)} />
 
          <TextField 
@@ -323,14 +338,27 @@ export function CreateResponsible() {
             type="text"
             label="Bairro"
             required
+            value={responsibleDistrict}
+            disabled={!isCepCorrect}
             onChange={(event) => setResponsibleDistrict(event.target.value)} />
 
         <TextField 
           placeholder="Ex: 280A"
           type="text"
           label="Número"
+          value={responsibleNumber}
+          disabled={!isCepCorrect}
           required
           onChange={(event) => setResponsibleNumber(event.target.value)} />
+        
+        <TextField 
+          placeholder="Ex: São Paulo"
+          type="text"
+          label="Cidade"
+          value={responsibleCity}
+          disabled
+          required
+          onChange={(event) => setResponsibleCity(event.target.value)} />
         
         <TextField
           id="outlined-select-currency"
@@ -347,15 +375,6 @@ export function CreateResponsible() {
             </MenuItem>
           ))}
         </TextField>
-        
-        <TextField 
-          placeholder="Ex: São Paulo"
-          type="text"
-          label="Cidade"
-          disabled
-          required
-          value={responsibleCity}
-          onChange={(event) => setResponsibleCity(event.target.value)} />
         <Button type="submit">Cadastrar</Button>
      </form>
       

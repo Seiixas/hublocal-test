@@ -134,6 +134,8 @@ export function CreatePlace() {
   const [companies, setCompanies] = useState<ICompany[]>([]);
   const [companyId, setCompanyId] = useState<string>('');
 
+  const [isCepCorrect, setIsCepCorrect] = useState(false);
+
   const [placeName, setPlaceName] = useState<string | null>('');
   const [cep, setCep] = useState<string>('');
   const [publicPlace, setPublicPlace] = useState<string | null>('');
@@ -143,12 +145,12 @@ export function CreatePlace() {
   const [state, setState] = useState<string | null>('');
   const [city, setCity] = useState<string | null>('');
 
-  async function handleCEP(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-    setCep(event.target.value);
-    if (cep?.length === 8) {
+  async function handleCEP() {
       const response = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
 
-      if (response.data.error === 'true') {
+      console.log(response.data.erro);
+
+      if (response.data.erro === 'true') {
         alert('CEP inválido!');
       } else {
         setPublicPlace(response.data.logradouro);
@@ -156,8 +158,8 @@ export function CreatePlace() {
         setDistrict(response.data.bairro);
         setCity(response.data.localidade);
         setState(response.data.uf);
+        setIsCepCorrect(true);
       }
-    }
   }
 
   useEffect(() => {
@@ -293,14 +295,23 @@ export function CreatePlace() {
           type="text"
           label="Nome"
           required
+          disabled={!isCepCorrect}
           onChange={(event) => setPlaceName(event.target.value)} />
 
-        <TextField 
-          placeholder="Apenas números"
-          type="number"
-          label="CEP"
-          required
-          onChange={(event) => { handleCEP(event) }} />
+        <div style={{display: 'flex', gap: '.5rem'}}>
+          <TextField 
+            placeholder="Apenas números"
+            type="number"
+            label="CEP"
+            required
+            disabled={isCepCorrect}
+            style={{ width: '90%' }}
+            onChange={(event) => setCep(event.target.value)} />
+          
+          <Button
+            onClick={handleCEP}
+            style={{ width: '10%' }}>Buscar</Button>
+        </div>
 
         <TextField 
           placeholder="Ex: Av. Pinheiro da Silva"
@@ -308,6 +319,7 @@ export function CreatePlace() {
           label="Logradouro"
           value={publicPlace}
           required
+          disabled={!isCepCorrect}
           onChange={(event) => setPublicPlace(event.target.value)} />
 
         <TextField 
@@ -315,6 +327,7 @@ export function CreatePlace() {
           type="text"
           label="Complemento"
           value={complement}
+          disabled={!isCepCorrect}
           onChange={(event) => setComplement(event.target.value)} />
 
          <TextField 
@@ -323,12 +336,14 @@ export function CreatePlace() {
             label="Bairro"
             value={district}
             required
+            disabled={!isCepCorrect}
             onChange={(event) => setDistrict(event.target.value)} />
 
         <TextField 
           placeholder="Ex: 280A"
           type="text"
           label="Número"
+          disabled={!isCepCorrect}
           required
           onChange={(event) => setNumber(event.target.value)} />
         
@@ -338,6 +353,7 @@ export function CreatePlace() {
           label="Cidade"
           value={city}
           disabled
+          required
           onChange={(event) => setCity(event.target.value)} />
         
         <TextField
@@ -346,6 +362,7 @@ export function CreatePlace() {
           label="Estado"
           value={state}
           disabled
+          required
           onChange={(event) => setState(event.target.value)}
         >
           {brazilianStates.map((option) => (
