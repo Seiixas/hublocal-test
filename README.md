@@ -73,7 +73,7 @@ npm run dev        # Se estiver usando o NPM
 yarn dev           # Se estiver usando o Yarn
 ```
 
-Crie um arquivo `.env` na pasta `src` para definir qual será o secret do JsonWebToken:
+Crie um arquivo `.env` na pasta `server` para definir qual será o secret do JsonWebToken:
 
 ```
 JWT_TOKEN=12312312
@@ -94,6 +94,12 @@ yarn               # Se estiver usando o Yarn
 # Rodando o front-end
 npm run dev      # Se estiver usando o NPM
 yarn dev         # Se estiver usando o Yarn
+```
+
+Crie um arquivo `.env` na pasta `web` para definir qual será a URL da API:
+
+```
+VITE_API_URL="http://localhost:3333/api/v1"
 ```
 
 O front-end será iniciado na porta 3000.
