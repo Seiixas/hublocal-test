@@ -38,7 +38,9 @@ class Responsible {
   @Column()
   is_main: boolean;
 
-  @ManyToOne(() => Company, (company) => company.responsibles)
+  @ManyToOne(() => Company, (company) => company.responsibles, {
+    onDelete: 'CASCADE'
+  })
   company: Company;
 
   @Column()

@@ -33,13 +33,17 @@ class Place {
   @Column()
   number: string;
 
-  @ManyToOne(() => Company, (company) => company.places)
+  @ManyToOne(() => Company, (company) => company.places, {
+    onDelete: 'CASCADE'
+  })
   company: Company;
 
   @Column()
   companyId: string;
 
-  @OneToMany(() => Ticket, (ticket) => ticket.place)
+  @OneToMany(() => Ticket, (ticket) => ticket.place, {
+    onDelete: 'CASCADE'
+  })
   tickets: Ticket[];
 
   constructor(id?: string) {

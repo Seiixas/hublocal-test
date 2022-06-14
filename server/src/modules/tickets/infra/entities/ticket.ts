@@ -21,7 +21,9 @@ class Ticket {
   @Column()
   status: string;
 
-  @ManyToOne(() => Place, (place) => place.tickets)
+  @ManyToOne(() => Place, (place) => place.tickets, {
+    onDelete: 'CASCADE'
+  })
   place: Place;
 
   @CreateDateColumn()

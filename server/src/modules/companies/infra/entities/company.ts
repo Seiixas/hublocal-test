@@ -18,10 +18,14 @@ class Company {
   @Column()
   CNPJ: string;
 
-  @OneToMany(() => Place, (place) => place.company)
+  @OneToMany(() => Place, (place) => place.company, {
+    onDelete: 'CASCADE'
+  })
   places: Place[];
 
-  @OneToMany(() => Responsible, (responsible) => responsible.company)
+  @OneToMany(() => Responsible, (responsible) => responsible.company, {
+    onDelete: 'CASCADE'
+  })
   responsibles: Responsible[];
 
   constructor() {
