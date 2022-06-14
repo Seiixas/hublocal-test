@@ -79,6 +79,30 @@ Crie um arquivo `.env` na pasta `server` para definir qual será o secret do Jso
 JWT_TOKEN=12312312
 ```
 
+Acrescente ao arquivo `.env` as configurações do banco de dados. Se criou o container da forma que foi mostrada acima, defina:
+
+```
+DB_TYPE=postgres
+DB_PORT=5432
+DB_HOST=localhost
+DB_USER=postgres
+DB_PASS=docker
+DB_DB=hublocal
+```
+
+No fim, o `.env` ficará assim:
+
+```
+JWT_TOKEN=12312312
+
+DB_TYPE=postgres
+DB_PORT=5432
+DB_HOST=localhost
+DB_USER=postgres
+DB_PASS=docker
+DB_DB=hublocal
+```
+
 Toda a documentação está disponível na rota `localhost:3333/api/v1/docs`
 O back-end será iniciado na porta 3333.
 
