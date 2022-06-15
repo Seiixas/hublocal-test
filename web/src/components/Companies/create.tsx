@@ -185,7 +185,7 @@ export function CreateCompany() {
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
-
+    window.scrollTo(0, 0);
     try {
       const response = await api.post('/companies', {
         name,
@@ -232,15 +232,17 @@ export function CreateCompany() {
         }
       });
 
-      const responsibleId = responsible.data.id;
-
-      await api.patch(`/responsible/${responsibleId}`, {
+      await api.patch(`/responsibles/${responsible.data}`, {
         company_id: id
       }, {
         headers: {
           Authorization: `Bearer ${token}` 
         }
-      })
+      });
+
+      setAlertSeverity('success');
+      setAlertMessage('Empresa criada com sucesso!');
+      setIsAlertOpen(true);
     } catch (err: any) {
       const { status } = err.response;
                   

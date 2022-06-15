@@ -20,6 +20,7 @@ export function Edit() {
 
   async function handleEditCompany(event: FormEvent) {
     event.preventDefault();
+    window.scrollTo(0, 0);
     try {
       const response = await api.put(`/companies/${params.id}`, {
         name,
@@ -29,6 +30,10 @@ export function Edit() {
           Authorization: `Bearer ${token}` 
         }
       });
+
+      setAlertSeverity('success');
+      setAlertMessage('Empresa atualizada com sucesso!');
+      setIsAlertOpen(true);
     } catch (err: any) {
       const { status } = err.response;
                   

@@ -140,13 +140,15 @@ export function ViewTicket() {
     const changeStatus = async () => {
       if (ticket?.status === 'PENDENTE') {
         try {
-          await api.patch(`/tickets/${params.id}`, {
+          const t = await api.patch(`/tickets/${params.id}`, {
             status: 'PROGRESSO'
           }, {
             headers: {
               Authorization: `Bearer ${token}` 
             }
-          })
+          });
+
+          console.log(t);
         } catch (err: any) {
           const { status } = err.response;
                   

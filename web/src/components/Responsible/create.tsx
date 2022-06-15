@@ -166,6 +166,7 @@ export function CreateResponsible() {
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
+    window.scrollTo(0, 0);
     try {
       const response = await api.post('/responsibles', {
         name: responsibleName,

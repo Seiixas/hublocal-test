@@ -207,6 +207,7 @@ export function CreatePlace() {
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
+    window.scrollTo(0, 0);
     try {
       if (!companyId) {
         setAlertSeverity('warning');
