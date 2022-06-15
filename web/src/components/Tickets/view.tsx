@@ -138,6 +138,7 @@ export function ViewTicket() {
     }
 
     const changeStatus = async () => {
+      window.scrollTo(0, 0);
       if (ticket?.status === 'PENDENTE') {
         try {
           const t = await api.patch(`/tickets/${params.id}`, {
@@ -188,6 +189,10 @@ export function ViewTicket() {
           Authorization: `Bearer ${token}` 
         }
       });
+
+      setAlertSeverity('success');
+      setAlertMessage('Ticket não autorizado com sucesso!');
+      setIsAlertOpen(true);
     } catch (err: any) {
       const { status } = err.response;
                   

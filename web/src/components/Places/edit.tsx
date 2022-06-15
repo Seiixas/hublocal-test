@@ -182,8 +182,8 @@ export function EditPlace() {
       });
 
       if (response.status === 201) {
-        setAlertSeverity('success');
-        setAlertMessage('Local atualizado com sucesso!');
+        setAlertSeverity('warning');
+        setAlertMessage('Ticket gerado! Aguarde autorização.');
         setIsAlertOpen(true);
       }
     } catch (err: any) {
