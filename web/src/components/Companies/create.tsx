@@ -127,6 +127,7 @@ export function CreateCompany() {
   const [cnpj, setCnpj] = useState<string | null>(null);
 
   const [isCepCorrect, setIsCepCorrect] = useState(false);
+  const [isCepResponsibleCorrect, setIsCepResponsibleCorrect] = useState(false);
 
   const [placeName, setPlaceName] = useState<string | null>('');
   const [cep, setCep] = useState<string>('');
@@ -167,9 +168,7 @@ export function CreateCompany() {
     
   }
 
-  async function handleCEPResponsible(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-    setResponsibleCep(event.target.value);
-    if (responsibleCep?.length === 8) {
+  async function handleCEPResponsible() {
       const response = await axios.get(`https://viacep.com.br/ws/${responsibleCep}/json/`);
 
       if (response.data.error === 'true') {
@@ -180,7 +179,7 @@ export function CreateCompany() {
         setResponsibleDistrict(response.data.bairro);
         setResponsibleCity(response.data.localidade);
         setResponsibleState(response.data.uf);
-      }    
+        setIsCepResponsibleCorrect(true);
     }
   }
 
@@ -419,17 +418,27 @@ export function CreateCompany() {
           required
           onChange={(event) => setPhoneNumber(event.target.value)} />
 
-        <TextField 
-          placeholder="Apenas números"
-          type="number"
-          label="CEP"
-          required
-          onChange={(event) => handleCEPResponsible(event)} />
+        <div style={{display: 'flex', gap: '.5rem'}}>
+          <TextField 
+            placeholder="Apenas números"
+            type="number"
+            label="CEP"
+            required
+            disabled={isCepResponsibleCorrect}
+            style={{ width: '90%' }}
+            onChange={(event) => setResponsibleCep(event.target.value)} />
+          
+          <Button
+            onClick={handleCEPResponsible}
+            style={{ width: '10%' }}>Buscar</Button>
+        </div>
 
         <TextField 
           placeholder="Ex: Av. Pinheiro da Silva"
           type="text"
           label="Logradouro" 
+          value={responsiblePublicPlace}
+          disabled={!isCepResponsibleCorrect}
           required
           onChange={(event) => setResponsiblePublicPlace(event.target.value)}/>
 
@@ -437,12 +446,16 @@ export function CreateCompany() {
           placeholder="Ex: Apartamento 105"
           type="text"
           label="Complemento"
+          value={responsibleComplement}
+          disabled={!isCepResponsibleCorrect}
           onChange={(event) => setResponsibleComplement(event.target.value)} />
 
          <TextField 
             placeholder="Ex: Centro"
             type="text"
             label="Bairro"
+            value={responsibleDistrict}
+            disabled={!isCepResponsibleCorrect}
             required
             onChange={(event) => setResponsibleDistrict(event.target.value)} />
 
@@ -450,6 +463,8 @@ export function CreateCompany() {
           placeholder="Ex: 280A"
           type="text"
           label="Número"
+          value={responsibleNumber}
+          disabled={!isCepResponsibleCorrect}
           required
           onChange={(event) => setResponsibleNumber(event.target.value)} />
         
