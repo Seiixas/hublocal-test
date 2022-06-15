@@ -4,6 +4,7 @@ import {
   Button,
   Card,
   CardActionArea,
+  CardActions,
   CardContent,
   CardMedia,
   Toolbar,
@@ -18,15 +19,113 @@ import {
    Place,
    PowerSettingsNew,
 } from "@material-ui/icons";
+import { useEffect, useState } from "react";
+import { api } from "../../lib/api";
 
-import { useState } from "react";
-import { Navigate } from "react-router-dom";
 import { handleChangePage } from "../../utils/chagePage";
+import { Message } from "../Message";
 
 export function Dashboard() {
+  const token = localStorage.getItem('token');
+  const name = localStorage.getItem('name');
+
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertSeverity, setAlertSeverity] = useState<'success' | 'error' | 'warning'>('success');
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
+
+  const [countCompanies, setCountCompanies] = useState(0);
+  const [countResponsible, setCountResponsible] = useState(0);
+  const [countPlaces, setCountPlaces] = useState(0);
+
+  const [countTicketFinished, setCountTicketFinished] = useState(0);
+  const [countTicketInProgress, setCountTicketInProgress] = useState(0);
+  const [countTicketPending, setCountTicketPending] = useState(0);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const companies = await api.get('/companies', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+
+        setCountCompanies(companies.data.length);
+
+        const places = await api.get('/places', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+
+        setCountPlaces(places.data.length);
+
+        const responsible = await api.get('/responsibles', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+
+        setCountResponsible(responsible.data.length);
+
+        const tickets = await api.get('/tickets', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+
+        const ticketsFinished = tickets.data.filter((ticket: any) => 
+          ticket.status === 'CONCLUÍDO'
+        ).length;
+
+        setCountTicketFinished(ticketsFinished);
+
+        const ticketsInProgress = tickets.data.filter((ticket: any) => 
+          ticket.status === 'PROGRESSO'
+        ).length;
+
+        setCountTicketInProgress(ticketsInProgress);
+
+
+        const ticketsPending = tickets.data.filter((ticket: any) => 
+          ticket.status === 'PENDENTE'
+        ).length;
+
+        setCountTicketPending(ticketsPending);
+
+
+      } catch (err: any) {
+        const { status } = err.response;
+                  
+        if (status === 401) {
+          setAlertSeverity('error');
+          setAlertMessage('Sessão expirada');
+          setIsAlertOpen(true);
+          localStorage.removeItem('token');
+          localStorage.removeItem('name');
+          localStorage.removeItem('id');
+          setTimeout(() => {
+            location.reload();
+          }, 5000);
+          return;
+        }
+
+        const { message } = err.response.data;
+        setAlertSeverity('error');
+        setAlertMessage(message);
+        setIsAlertOpen(true);
+      }
+    }
+
+    fetchData();
+  }, []);
 
   return (
     <>
+      <Message
+        type={alertSeverity}
+        visibility={isAlertOpen}
+        >{ alertMessage }</Message>
       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
         <AppBar position="static">
           <Toolbar style={{ display: 'flex', justifyContent: 'space-between'}}>
@@ -83,13 +182,146 @@ export function Dashboard() {
                 localStorage.removeItem('id');
                 location.reload();
               }}>
+              <span>{name}</span>
               <PowerSettingsNew />
-              Sair
             </Button>
           </Toolbar>
           
         </AppBar>
       </Box>
+      <div style={{ padding: '1rem' }}>
+        <Typography variant="h5">Estatísticas</Typography>
+        <Card style={{ marginTop: '.5rem' }}>
+        <CardActionArea>
+          <CardContent>
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'space-between' }}>
+
+              <Typography gutterBottom variant="h5" component="div">
+                Empresas
+              </Typography>
+
+              <Apartment 
+                style={{ backgroundColor: '#086ccc', color: 'white' }}
+                fontSize="large"
+                />
+            </div>
+            <Typography variant="body2">
+              { countCompanies } empresas cadastradas
+            </Typography>
+          </CardContent>
+        </CardActionArea>
+        <CardActions>
+          <Button
+            size="small"
+            color="primary"
+            onClick={() => handleChangePage('/companies')}>
+            Ver
+          </Button>
+        </CardActions>
+        </Card>
+        <Card style={{ marginTop: '.5rem' }}>
+        <CardActionArea>
+          <CardContent>
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'space-between' }}>
+
+              <Typography gutterBottom variant="h5" component="div">
+                Responsáveis
+              </Typography>
+
+              <Person 
+                style={{ backgroundColor: '#02ad02', color: 'white' }}
+                fontSize="large"
+                />
+            </div>
+            <Typography variant="body2">
+              { countResponsible } responsáveis cadastrados
+            </Typography>
+          </CardContent>
+        </CardActionArea>
+        <CardActions>
+          <Button
+            size="small"
+            color="primary"
+            onClick={() => handleChangePage('/responsible')}>
+            Ver
+          </Button>
+        </CardActions>
+        </Card>
+        <Card style={{ marginTop: '.5rem' }}>
+        <CardActionArea>
+          <CardContent>
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'space-between' }}>
+
+              <Typography gutterBottom variant="h5" component="div">
+                Localizações
+              </Typography>
+
+              <Place 
+                style={{ backgroundColor: '#d10202', color: 'white' }}
+                fontSize="large"
+                />
+            </div>
+            <Typography variant="body2">
+              {countPlaces} locais cadastrados
+            </Typography>
+          </CardContent>
+        </CardActionArea>
+        <CardActions>
+          <Button
+            size="small"
+            color="primary"
+            onClick={() => handleChangePage('/places')}>
+            Ver
+          </Button>
+        </CardActions>
+        </Card>
+        <Card style={{ marginTop: '.5rem' }}>
+        <CardActionArea>
+          <CardContent>
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'space-between' }}>
+
+              <Typography gutterBottom variant="h5" component="div">
+                Tickets
+              </Typography>
+
+              <ConfirmationNumber 
+                style={{ backgroundColor: '#38bdb9', color: 'white' }}
+                fontSize="large"
+                />
+            </div>
+            <Typography variant="body2">
+              {countTicketFinished} tickets concluídos <br/>
+              {countTicketPending} tickets pendentes <br/>
+              {countTicketInProgress} tickets em progresso <br/>
+            </Typography>
+          </CardContent>
+        </CardActionArea>
+        <CardActions>
+          <Button
+            size="small"
+            color="primary"
+            onClick={() => handleChangePage('/tickets')}>
+            Ver
+          </Button>
+        </CardActions>
+        </Card>
+        
+      </div>
+      <div style={{ padding: '1rem' }}>
+        <Typography variant="h5">Definições</Typography>
+      </div>
       <div style={{ display: 'flex', gap: 10, padding: '1rem', flexWrap: 'nowrap' }}>
       <Card>
         <CardActionArea>
@@ -104,7 +336,7 @@ export function Dashboard() {
               Empresas
             </Typography>
             <Typography variant="body2">
-              Veja, crie, atualize e remova empresas do sistema! Lorem ipsum dolor, sit amet consectetur adipisicing elit. Dolorum veniam architecto sit perferendis fugit ullam adipisci molestiae mollitia facilis totam fugiat accusamus assumenda quibusdam cumque vero, doloremque labore vitae omnis.
+            Empresa é uma organização que realiza atividades econômicas com finalidades comerciais, por meio da produção e venda de bens ou serviços.
             </Typography>
           </CardContent>
         </CardActionArea>
@@ -122,7 +354,7 @@ export function Dashboard() {
               Responsáveis
             </Typography>
             <Typography variant="body2">
-              Veja, crie, atualize e remova responsáveis do sistema! Lorem ipsum dolor, sit amet consectetur adipisicing elit. Dolorum veniam architecto sit perferendis fugit ullam adipisci molestiae mollitia facilis totam fugiat accusamus assumenda quibusdam cumque vero, doloremque labore vitae omnis.
+              Responsável é a pessoa contratada para prestar serviços para um empregador, numa carga horária definida, mediante salário. O serviço necessariamente tem de ser subordinado.
             </Typography>
           </CardContent>
         </CardActionArea>
@@ -140,7 +372,7 @@ export function Dashboard() {
               Localizações
             </Typography>
             <Typography variant="body2">
-              Veja, crie, atualize e remova responsáveis do sistema! Lorem ipsum dolor, sit amet consectetur adipisicing elit. Dolorum veniam architecto sit perferendis fugit ullam adipisci molestiae mollitia facilis totam fugiat accusamus assumenda quibusdam cumque vero, doloremque labore vitae omnis.
+            É o termo usado em geografia e áreas afins para designar a posição de algo num espaço físico. Será definida a localização em endereço da empresa a qual está no sistema
             </Typography>
           </CardContent>
         </CardActionArea>
@@ -158,7 +390,7 @@ export function Dashboard() {
               Tickets
             </Typography>
             <Typography variant="body2">
-              Adiocioneadasdasddas e remova tickets do sistema! Lorem ipsum dolor, sit amet consectetur adipisicing elit. Dolorum veniam architecto sit perferendis fugit ullam adipisci molestiae mollitia facilis totam fugiat accusamus assumenda quibusdam cumque vero, doloremque labore vitae omnis.
+              São tickets gerados para o controle de autoria do sistema, onde para todas as alterações de localização é gerado um ticket para ser aprovado ou recusado por um usuário.
             </Typography>
           </CardContent>
         </CardActionArea>
