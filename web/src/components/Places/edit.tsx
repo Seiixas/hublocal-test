@@ -144,7 +144,7 @@ export function EditPlace() {
   async function handleCEP() {
       const response = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
 
-      if (response.data.error === 'true') {
+      if (response.data.erro === 'true') {
         alert('CEP inválido!');
       } else {
         setPublicPlace(response.data.logradouro);

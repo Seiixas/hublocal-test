@@ -190,7 +190,7 @@ export function EditResponsible() {
   async function handleCEPResponsible() {
       const response = await axios.get(`https://viacep.com.br/ws/${responsibleCep}/json/`);
 
-      if (response.data.error === 'true') {
+      if (response.data.erro === 'true') {
         alert('CEP inválido!');
       } else {
         setResponsiblePublicPlace(response.data.logradouro);
